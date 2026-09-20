@@ -1,0 +1,6 @@
+{
+  "name": "Test Restaurang",
+  "description": "Nordic gastronomy and seasonal table reservations rooted in wild nature and quiet craft on Skeppsbron, Stockholm.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

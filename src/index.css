@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #091510;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #1e2a24;
+  --color-on-primary-container: #849289;
+  --color-primary-fixed: #d8e6dc;
+  --color-primary-fixed-dim: #bccac1;
+  --color-secondary: #725b38;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #fedeb2;
+  --color-on-secondary-container: #78603e;
+  --color-secondary-fixed: #fedeb2;
+  --color-secondary-fixed-dim: #e0c298;
+  --color-tertiary: #0a1510;
+  --color-tertiary-container: #1f2a24;
+  --color-tertiary-fixed: #d9e6dd;
+  --color-on-tertiary-fixed: #131e18;
+  --color-surface: #fbf9f7;
+  --color-surface-dim: #dbdad8;
+  --color-surface-bright: #fbf9f7;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f5f3f1;
+  --color-surface-container: #efeeeb;
+  --color-surface-container-high: #e9e8e6;
+  --color-surface-container-highest: #e4e2e0;
+  --color-on-surface: #1b1c1b;
+  --color-on-surface-variant: #434845;
+  --color-outline: #737874;
+  --color-outline-variant: #c3c8c3;
+  --color-inverse-surface: #30312f;
+  --color-inverse-on-surface: #f2f0ee;
+
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-headline: "Playfair Display", Georgia, serif;
+  --font-sans: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+  --font-body: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+    color: var(--color-on-surface);
+    background-color: var(--color-surface);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Hide scrollbars while preserving scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Safe area padding utilities */
+.pt-safe {
+  padding-top: max(env(safe-area-inset-top, 0px), 0px);
+}
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 0px);
+}
