@@ -156,21 +156,60 @@ export const BookTableView: React.FC<BookTableViewProps> = ({
   };
 
   // Step 3 Confirmation
-  const handleFinalConfirm = () => {
-    const newBooking: ConfirmedBooking = {
-      ...booking,
-      date: formattedDate,
-      seatingArea: isSv ? currentArea.titleSv : currentArea.title,
-      id: `#TR-${Math.floor(10000 + Math.random() * 90000)}`,
-      createdAt: new Date().toISOString(),
-    };
+ // Step 3 Confirmation
+const handleFinalConfirm = async () => {
+  try {
+    const response = await fetch('/api/reservations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        guests: booking.guests,
+        date: selectedDateKey,
+        time: booking.time,
+        seatingArea: isSv ? currentArea.titleSv : currentArea.title,
+        fullName: booking.fullName,
+        countryCode: booking.countryCode,
+        phone: booking.phone,
+        email: booking.email,
+        specialRequests: booking.specialRequests,
+      }),
+    });
 
-    setConfirmedData(newBooking);
-    onBookingConfirmed(newBooking);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Reservation failed');
+    }
+
+    const confirmedBooking: ConfirmedBooking = {
+  ...booking,
+  date: formattedDate,
+  seatingArea: data.reservation.seatingArea,
+  id: data.reservation.id,
+  createdAt: data.reservation.createdAt,
+};
+
+    setConfirmedData(confirmedBooking);
+    onBookingConfirmed(confirmedBooking);
     setIsModalOpen(true);
-    onShowToast(isSv ? 'Bordet är nu reserverat!' : 'Table reservation confirmed!');
-  };
 
+    onShowToast(
+      isSv
+        ? 'Bordet är nu reserverat!'
+        : 'Table reservation confirmed!'
+    );
+  } catch (error) {
+    console.error('Reservation error:', error);
+
+    onShowToast(
+      isSv
+        ? 'Reservationen kunde inte genomföras. Försök igen.'
+        : 'Reservation could not be completed. Please try again.'
+    );
+  }
+};
   // Reset reservation flow cleanly on "Done / Klart"
   const handleDoneReset = () => {
     setIsModalOpen(false);
@@ -1005,9 +1044,9 @@ export const BookTableView: React.FC<BookTableViewProps> = ({
               {isSv ? 'Bord reserverat!' : 'Table Reserved!'}
             </h2>
             <p className="font-sans text-[13px] text-center text-[#434845] mt-1 mb-5 leading-relaxed">
-              {isSv
-                ? `Ditt gästpass har genererats. En omedelbar bekräftelse med vägbeskrivning och kalenderinbjudan har skickats till ${confirmedData.fullName}.`
-                : `Your booking pass has been generated. An instant confirmation with directions and calendar invite was sent to ${confirmedData.fullName}.`}
+             {isSv
+                   ? `Din reservation har sparats. Spara bokningsreferensen om du behöver ändra eller avboka reservationen senare.`
+                 : `Your reservation has been saved. Please keep your booking reference if you need to modify or cancel the reservation later.`}
             </p>
 
             <div className="bg-[#f5f3f1] rounded-2xl p-4 mb-5 space-y-2 text-sm border border-[#c3c8c3]/30">
