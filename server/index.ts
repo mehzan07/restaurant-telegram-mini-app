@@ -1,6 +1,8 @@
 import express from 'express';
 import { randomInt } from 'node:crypto';
 import { db } from './database.js';
+import { sendReservationConfirmation } from './email.js';
+import 'dotenv/config';
 
 const app = express();
 const PORT = 3001;
@@ -55,7 +57,7 @@ app.get('/api/health', (_req, res) => {
 // Create reservation
 // ---------------------------------------------------------
 
-app.post('/api/reservations', (req, res) => {
+app.post('/api/reservations', async (req, res) => {
   try {
     const {
       guests,
@@ -307,11 +309,35 @@ app.post('/api/reservations', (req, res) => {
 
     console.log('Reservation saved:', reservation);
 
-    return res.status(201).json({
-      success: true,
-      message: 'Reservation created successfully',
-      reservation,
-    });
+// -------------------------------------------------------
+// Send confirmation email
+// -------------------------------------------------------
+
+let emailSent = false;
+
+try {
+  const emailResult = await sendReservationConfirmation(reservation);
+  emailSent = emailResult.sent;
+} catch (emailError) {
+  console.error(
+    'Reservation was saved, but confirmation email failed:',
+    emailError
+  );
+}
+
+// -------------------------------------------------------
+// Return successful reservation response
+// -------------------------------------------------------
+
+return res.status(201).json({
+  success: true,
+  message: emailSent
+    ? 'Reservation created and confirmation email sent'
+    : 'Reservation created, but confirmation email was not sent',
+  reservation,
+  emailSent,
+});
+
   } catch (error) {
     console.error('Reservation API error:', error);
 

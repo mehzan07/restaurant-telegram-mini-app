@@ -97,6 +97,8 @@ export const BookTableView: React.FC<BookTableViewProps> = ({
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmedData, setConfirmedData] = useState<ConfirmedBooking | null>(null);
+  const [confirmationEmailSent, setConfirmationEmailSent] = useState(false);
+ 
 
   // Selected date item
   const selectedDateOption = useMemo(
@@ -191,9 +193,10 @@ const handleFinalConfirm = async () => {
   createdAt: data.reservation.createdAt,
 };
 
-    setConfirmedData(confirmedBooking);
-    onBookingConfirmed(confirmedBooking);
-    setIsModalOpen(true);
+  setConfirmedData(confirmedBooking);
+ setConfirmationEmailSent(data.emailSent === true);
+ onBookingConfirmed(confirmedBooking);
+ setIsModalOpen(true);
 
     onShowToast(
       isSv
@@ -1048,6 +1051,45 @@ const handleFinalConfirm = async () => {
                    ? `Din reservation har sparats. Spara bokningsreferensen om du behöver ändra eller avboka reservationen senare.`
                  : `Your reservation has been saved. Please keep your booking reference if you need to modify or cancel the reservation later.`}
             </p>
+            {confirmationEmailSent ? (
+  <div className="mb-4 p-3 rounded-xl bg-[#d8e6dc] border border-[#c3c8c3]/40 flex items-start gap-2">
+    <span className="material-symbols-outlined text-[#091510] text-[20px]">
+      mark_email_read
+    </span>
+
+    <div className="font-sans text-[12px] text-[#091510]">
+      <div className="font-semibold">
+        {isSv ? 'Bekräftelse skickad' : 'Confirmation email sent'}
+      </div>
+
+      <div className="mt-0.5">
+        {isSv
+          ? `Ett bekräftelsemail har skickats till ${confirmedData.email}.`
+          : `A confirmation email has been sent to ${confirmedData.email}.`}
+      </div>
+    </div>
+  </div>
+) : (
+  <div className="mb-4 p-3 rounded-xl bg-[#fedeb2]/35 border border-[#fedeb2]/60 flex items-start gap-2">
+    <span className="material-symbols-outlined text-[#725b38] text-[20px]">
+      warning
+    </span>
+
+    <div className="font-sans text-[12px] text-[#78603e]">
+      <div className="font-semibold">
+        {isSv
+          ? 'Bekräftelsemail kunde inte skickas'
+          : 'Confirmation email could not be sent'}
+      </div>
+
+      <div className="mt-0.5">
+        {isSv
+          ? 'Din reservation är ändå bekräftad. Spara din bokningsreferens.'
+          : 'Your reservation is still confirmed. Please keep your booking reference.'}
+      </div>
+    </div>
+  </div>
+)}
 
             <div className="bg-[#f5f3f1] rounded-2xl p-4 mb-5 space-y-2 text-sm border border-[#c3c8c3]/30">
               <div className="flex justify-between font-sans text-[12px] text-[#434845]">
