@@ -52,12 +52,12 @@ export async function sendReservationConfirmation(
   await transporter.sendMail({
     from: SMTP_FROM,
     to: reservation.email,
-    subject: `Test Restaurang - Reservation ${reservation.id}`,
+    subject: `Nordic Ember - Reservation ${reservation.id}`,
 
     text: `
 Hello ${reservation.fullName},
 
-Thank you for your reservation at Test Restaurang.
+Thank you for your reservation at Nordic Ember.
 
 Booking reference: ${reservation.id}
 Date: ${reservation.date}
@@ -74,7 +74,7 @@ ${
 Please keep your booking reference if you need to contact the restaurant about your reservation.
 
 Best regards,
-Test Restaurang
+Nordic Ember
     `.trim(),
   });
 

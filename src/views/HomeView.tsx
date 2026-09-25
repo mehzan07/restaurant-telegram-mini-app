@@ -50,8 +50,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </span>
           <p className="font-serif text-[24px] sm:text-[28px] text-white leading-tight font-medium">
             {isSv
-              ? 'Välkommen till Test Restaurang'
-              : 'Welcome to Test Restaurang'}
+              ? 'Välkommen till Nordic Ember'
+              : 'Welcome to Nordic Ember'}
           </p>
         </div>
       </div>

@@ -55,7 +55,7 @@ export const ContactView: React.FC<ContactViewProps> = ({
         <a
           id="contact-phone-link"
           href="tel:+4681234567"
-          aria-label={isSv ? 'Ring Test Restaurang på +46 8 123 45 67' : 'Call Test Restaurang at +46 8 123 45 67'}
+          aria-label={isSv ? 'Ring Nordic Ember på +46 8 123 45 67' : 'Call Nordic Ember at +46 8 123 45 67'}
           className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#efeeeb] hover:bg-[#e4e2e0] active:scale-95 transition-all text-center group border border-[#c3c8c3]/30 cursor-pointer"
         >
           <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#091510] mb-2 shadow-sm group-hover:bg-[#091510] group-hover:text-white transition-colors">
@@ -69,8 +69,8 @@ export const ContactView: React.FC<ContactViewProps> = ({
 
         <a
           id="contact-email-link"
-          href="mailto:bokning@testrestaurang.se"
-          aria-label={isSv ? 'Skicka e-post till bokning@testrestaurang.se' : 'Send email to bokning@testrestaurang.se'}
+          href="mailto:booking@nordicember.se"
+          aria-label={isSv ? 'Skicka e-post till booking@nordicember.se' : 'Send email to booking@nordicember.se'}
           className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#efeeeb] hover:bg-[#e4e2e0] active:scale-95 transition-all text-center group border border-[#c3c8c3]/30 cursor-pointer"
         >
           <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#091510] mb-2 shadow-sm group-hover:bg-[#091510] group-hover:text-white transition-colors">
@@ -80,7 +80,7 @@ export const ContactView: React.FC<ContactViewProps> = ({
             {isSv ? 'E-post' : 'Email'}
           </span>
           <span className="font-sans text-[10px] text-[#434845] mt-0.5 truncate max-w-full px-1 font-medium">
-            bokning@testrestaurang.se
+            booking@nordicember.se
           </span>
         </a>
 
@@ -125,7 +125,7 @@ export const ContactView: React.FC<ContactViewProps> = ({
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md shadow-md border border-[#c3c8c3]/30">
               <span className="w-2 h-2 rounded-full bg-[#725b38] animate-pulse"></span>
               <span className="font-sans text-[12px] text-[#091510] font-semibold">
-                Test Restaurang
+                Nordic Ember
               </span>
             </div>
             <div className="w-6 h-6 -mt-0.5 rounded-full bg-[#091510] flex items-center justify-center shadow-lg border-2 border-white">
@@ -221,8 +221,8 @@ export const ContactView: React.FC<ContactViewProps> = ({
 
             <a
               id="details-email-link"
-              href="mailto:bokning@testrestaurang.se"
-              aria-label={isSv ? 'Skicka e-post till bokning@testrestaurang.se' : 'Send email to bokning@testrestaurang.se'}
+              href="mailto:booking@nordicember.se"
+              aria-label={isSv ? 'Skicka e-post till booking@nordicember.se' : 'Send email to booking@nordicember.se'}
               className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#efeeeb] hover:bg-[#e4e2e0] text-[#091510] transition-colors group cursor-pointer"
             >
               <div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center text-[#091510] group-hover:bg-[#091510] group-hover:text-white transition-colors shrink-0">
@@ -233,7 +233,7 @@ export const ContactView: React.FC<ContactViewProps> = ({
                   {isSv ? 'E-postförfrågan' : 'Email Inquiries'}
                 </span>
                 <span className="font-sans text-[12px] font-semibold text-[#091510] truncate mt-0.5">
-                  bokning@testrestaurang.se
+                  booking@nordicember.se
                 </span>
               </div>
             </a>

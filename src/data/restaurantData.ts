@@ -1,7 +1,8 @@
 import { Dish, Producer, FAQItem, TastingCourse } from '../types';
 
 export const RESTAURANT_IMAGES = {
-  logo: 'https://lh3.googleusercontent.com/aida/AEtjO1VNs7MU9e0ndOulP4sNKj-F_RD3szqgkR_d_1xFtPRedp-cPOtrBZL8Bzdn9A8JmusQyCYMlS90vDtFNBtLz_yvtDDzo58BVwu900uBMv_zLyfoGavQ76pPTZgeqGA6YtVdEr2VSFF3EbU3ZWxrh5RaWptxwtDcVpGrZdU3XlVt7mrdd7O72ah1xknlwYfSMrsfVBHRJgKF0lVdgV4CbWRZ4I6FZRzch9umszw5afb_ByPxkF4jFeCub7CN',
+  logo: '/images/nordic-ember-icon.png',
+  fullLogo: '/images/nordic-ember-logo.png',
   homeHero: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBQ9EpATVuqq6P23_3ATnaib5zyRyZVGxQL6kwggSLUpWGOeP1EPLCaSVKU6oCveygw5lp-BgSjzXcKguxI8omFttlTupj3WUfBr2SIUlG5CiaGn1_8x_9QW0PLsDbHJ7aOhQHeGTHRlhKgVifMDmDn05HHkRzcJeskkY8aiss3OC0BrNwka5Ae8O0jsK5lP3nFQ6eA-C35-IYmsML9A8CrttaeBU2nvMviu65FaKu9l0EW-S3xwc1lyA',
   charFeature: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCAo-s8JAqYXMruhL2eoO73X6t467K3AdJyf2C2sd5SjUPlJvutGVGpampYABppOS7Fiv6ZKPSwNyfBl-cZ3BxHqjefjEJeF8MBUmm5mywKPPuXX62R-JTQU_XM02I9fy0OtvKdevg52L0RdyNOiU2-purVEfPyQNK6m27A5Vpd-JtMhnxlCRZEFs5lubzOPxwN6Sp1IKbF6bbkp4qR7Z3hIrVC3ViMnYOEBNHNnETgcfMaRgKInA5UJg',
   bookTableInterior: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAEMJaIGtQ-bHVclGQSF957oJrQ-cAFH-vw6YrY-RiL7vx7tectJ8asgswFkmcz6hEMDiXlO_puv3ZaIHBAUnoPGMSn7L68BDgViHWivOCXe2A34oK4t4EwevzM7rbM1gT2TPvfNHovK7RdjZIJCaVBfIW4M2M0JQgUpg8q3RlAtm3_1lcKLQO9-a52UcIyHm8AdYFb_etk1DgD01HErbllNNu_SLuDAsTR7fYs8a02sZydBXiJSJc08w',
@@ -10,7 +11,16 @@ export const RESTAURANT_IMAGES = {
   ceramics: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA8UzaREul1I-wETqUQtBqHLU5X47wUpQ_MpHOirzRU2HTXPO40_416TL5zqAe2EWdSVBv5R8GHo736DeLmuad_KVHEVckFbSfKdhudW-yyq50k1GGyY1X1yx2Oz-7ierrPjFEl330XMu8e5X8X1z0Qd8ITfY_ncZaUFKpiBy-MQN1OcEw4k6DU4ZxZZuLTP9NtzeJaJlXe4KEGVWYwD7I0pgb_BniIHwh9Q-1PLE9EA8rNgy80VZ3nTw',
   mapView: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDEgwOFvt6eQIa6XLaqBtUBFUZ5dKaEUuAZTR3GOUejNp5n2XPsAnG85ENzrg3a3BOFJQ_Myn071r1SEDWT6_yYmiezAul8T2GNYv-HRlhOxgPohtbB3LFfmRmj0ix47SJyvFfgOFqQpFDuu_Bgo3lmlLamiPePu7StW1Aq_OLIEu69EzeMmUYBsj5rbCitTkh2Rqi1SzIahyPrfmyU72wFsgMuGvYBdcLL514jpYEZmgd74kDYJyaaAA',
   hostPortrait: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAG6HS55me34PfXmPnBZ9gSPhHuO7T2k0y5jzh_PT6ZC5jnruTdZcH2LhL3M-jUVVniL7drng_iCO038oo9_GmdZXIaCCdTIFfyMZ6VkqlcO5OykSauwfYkqh1jduJTTyczV20vvgBjWCpEPAMCarmE_Dip5_qnvaoDWk0ebPRNbJN5bKo3T8lIHVig3lq4dQYIWI5Hlp_nXNMcmGPeg8Pk8wtMvSbbeCrWgw7LZgAWNjfZ-KVQXlFTrQ',
-  charMenuPhoto: 'https://lh3.googleusercontent.com/aida/AEtjO1UNJG-wcUvKW2PIbiv4BVwQ-EkOP9cJS_Z7IJYXMJfP8nyNK4r6BqTILp8gj78DE1VhxP_AyDfgOQpTzfHO1YJLmc9gitEJfpw5CLWErume7G2CRyut2v-552iYFGFEDOHIihTCsEnkJN7gbccz6CIiFs2O_lrlnaJuGJv7a9V3VHU5F9oYSwLDqdneRbzBQKzRRHhkAKzjNKtN_AiFJ5bpKmrEyG4UHZH-rUgWfnQbNesTLoTaPnCkU1PT'
+
+  // Local menu dish images
+  charMenuPhoto: '/images/dishes/arctic-char.png',
+  reindeerMenuPhoto: '/images/dishes/reindeer.png',
+  ravioliMenuPhoto: '/images/dishes/mushroom-ravioli.png',
+  cloudberryMenuPhoto: '/images/dishes/cloudberry-dessert.png',
+  scallopMenuPhoto: '/images/dishes/scallop.png',
+  seaTroutMenuPhoto: '/images/dishes/gravad-sea-trout.png',
+ lambMenuPhoto: '/images/dishes/lamb.png',
+  tartareMenuPhoto: '/images/dishes/beef-tartare.png',
 };
 
 export const DISHES: Dish[] = [
@@ -53,7 +63,34 @@ export const DISHES: Dish[] = [
     tags: ['local', 'gf'],
     tagLabel: 'GF',
     tagLabelSv: 'Glutenfri',
+    imageUrl: RESTAURANT_IMAGES.reindeerMenuPhoto,
   },
+{
+  id: 'lamb',
+  title: 'Lamm & Timjan',
+  titleSv: 'Lamm & Timjan',
+  sub: 'Swedish Lamb · Wild Thyme · Roasted Root Vegetables',
+  subSv: 'Svenskt lamm · Vild timjan · Rostade rotfrukter',
+  price: 385,
+  category: 'mains',
+
+  desc: 'Tender Swedish lamb served with roasted seasonal root vegetables, silky celeriac purée, red wine jus, and fragrant wild thyme.',
+  descSv: 'Mört svenskt lamm med rostade säsongsrotfrukter, len rotselleripuré, rödvinssky och doftande vild timjan.',
+
+  pairing: '2020 Crozes-Hermitage, Northern Rhône',
+  pairingNotes: 'Dark berries, herbs, and gentle spice complement the richness of the lamb and thyme.',
+  pairingNotesSv: 'Mörka bär, örter och mild kryddighet kompletterar lammets fyllighet och timjan.',
+
+  allergens: 'Gluten-Free · Contains Dairy',
+  allergensSv: 'Glutenfri · Innehåller mjölk',
+
+  tags: ['local', 'gf'],
+  tagLabel: 'Swedish Farm',
+  tagLabelSv: 'Svensk gård',
+
+  imageUrl: RESTAURANT_IMAGES.lambMenuPhoto,
+},
+
   {
     id: 'ravioli',
     title: 'Karljohan Svampravioli',
@@ -72,6 +109,7 @@ export const DISHES: Dish[] = [
     tags: ['vg', 'local'],
     tagLabel: 'VG',
     tagLabelSv: 'Vegetarisk',
+    imageUrl: RESTAURANT_IMAGES.ravioliMenuPhoto,
   },
   {
     id: 'cloudberry',
@@ -91,6 +129,7 @@ export const DISHES: Dish[] = [
     tags: ['local', 'gf'],
     tagLabel: 'GF',
     tagLabelSv: 'Glutenfri',
+    imageUrl: RESTAURANT_IMAGES.cloudberryMenuPhoto,
   },
   {
     id: 'scallop',
@@ -110,6 +149,7 @@ export const DISHES: Dish[] = [
     tags: ['local', 'gf'],
     tagLabel: 'Raw Bar',
     tagLabelSv: 'Råbar',
+    imageUrl: RESTAURANT_IMAGES.scallopMenuPhoto,
   },
   {
     id: 'tartare',
@@ -129,6 +169,8 @@ export const DISHES: Dish[] = [
     tags: ['local'],
     tagLabel: 'Heritage',
     tagLabelSv: 'Kulturarv',
+    imageUrl: RESTAURANT_IMAGES.tartareMenuPhoto,
+    
   },
   {
     id: 'birch-cellar',

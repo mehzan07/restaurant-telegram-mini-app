@@ -217,6 +217,7 @@ const handleFinalConfirm = async () => {
   const handleDoneReset = () => {
     setIsModalOpen(false);
     setConfirmedData(null);
+    setConfirmationEmailSent(false);
     setCurrentStep(1);
     const defaultDateKey = bookingDates[0]?.key || '2026-09-20';
     setSelectedDateKey(defaultDateKey);

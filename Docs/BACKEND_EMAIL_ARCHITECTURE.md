@@ -170,7 +170,7 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=YOUR_REAL_GMAIL_ADDRESS
 SMTP_PASS=YOUR_GMAIL_APP_PASSWORD
-SMTP_FROM="Test Restaurang <YOUR_REAL_GMAIL_ADDRESS>"
+SMTP_FROM="Nordic Ember <YOUR_REAL_GMAIL_ADDRESS>"
 ```
 
 Never place the real Gmail app password in documentation or commit it to

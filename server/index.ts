@@ -30,6 +30,8 @@ const ALLOWED_SEATING_AREAS = [
   'Fönsterbord',
   'Bar Counter',
   'Bardisk',
+   "Chef's Counter",
+   'Lounge & Wine Bar',
 ];
 
 const ALLOWED_COUNTRY_CODES = [
@@ -49,7 +51,7 @@ const ALLOWED_COUNTRY_CODES = [
 app.get('/api/health', (_req, res) => {
   res.json({
     status: 'ok',
-    message: 'Test Restaurang reservation API is running',
+    message: 'Nordic Ember reservation API is running',
   });
 });
 
@@ -397,6 +399,6 @@ app.get('/api/reservations', (_req, res) => {
 
 app.listen(PORT, () => {
   console.log(
-    `Test Restaurang API running at http://localhost:${PORT}`
+    `Nordic Ember API running at http://localhost:${PORT}`
   );
 });

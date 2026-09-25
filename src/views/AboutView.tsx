@@ -20,7 +20,7 @@ export const AboutView: React.FC<AboutViewProps> = ({
       <section className="relative w-full rounded-2xl overflow-hidden shadow-sm bg-[#f5f3f1] border border-[#c3c8c3]/30">
         <div className="relative w-full aspect-[16/10] sm:aspect-[1.79/1] overflow-hidden">
           <img
-            alt="Interior of Test Restaurant dining room with warm oak and minimalist Scandinavian light"
+            alt="Interior of Nordic Ember dining room with warm oak and minimalist Scandinavian light"
             src={RESTAURANT_IMAGES.aboutHero}
             className="w-full h-full object-cover object-center transform scale-[1.02] transition-transform duration-700 ease-out"
           />
@@ -80,8 +80,8 @@ export const AboutView: React.FC<AboutViewProps> = ({
         <div className="flex flex-col gap-3 text-[#1b1c1b] font-sans text-[14px] leading-relaxed">
           <p>
             {isSv
-              ? 'Född ur skärgårdens stillhet och Sörmlands urgamla tallhedar är Test Restaurang en hyllning till tålamod. Vi betraktar gastronomi inte som uppfinning, utan som ett ödmjukt lyssnande till jord, bräckt vatten och frostens växlingar.'
-              : 'Born from the elemental quiet of the Swedish archipelago and the ancient pine barrens of Sörmland, Test Restaurang is an ode to patience. We view gastronomy not as invention, but as deep listening to soil, brackish water, and changing frosts.'}
+              ? 'Född ur skärgårdens stillhet och Sörmlands urgamla tallhedar är Nordic Ember en hyllning till tålamod. Vi betraktar gastronomi inte som uppfinning, utan som ett ödmjukt lyssnande till jord, bräckt vatten och frostens växlingar.'
+              : 'Born from the elemental quiet of the Swedish archipelago and the ancient pine barrens of Sörmland, Nordic Ember is an ode to patience. We view gastronomy not as invention, but as deep listening to soil, brackish water, and changing frosts.'}
           </p>
           <p className="text-[#434845]">
             {isSv
@@ -327,8 +327,8 @@ export const AboutView: React.FC<AboutViewProps> = ({
           </span>
           <h3 className="font-serif text-[22px] text-[#091510]">
             {isSv
-              ? 'Upplev Test Restaurang ikväll'
-              : 'Experience Test Restaurang this evening'}
+              ? 'Upplev Nordic Ember ikväll'
+              : 'Experience Nordic Ember this evening'}
           </h3>
           <p className="font-sans text-[13px] text-[#434845] mt-0.5 leading-relaxed">
             {isSv

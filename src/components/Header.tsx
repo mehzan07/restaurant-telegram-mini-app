@@ -43,13 +43,13 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Brand Identification */}
         <div className="flex items-center gap-2.5 min-w-0">
           <img
-            alt="Test Restaurang Logo"
-            className="h-8 w-auto object-contain shrink-0"
-            src={RESTAURANT_IMAGES.logo}
+             alt="Nordic Ember Logo"
+             className="h-16 w-16 object-contain shrink-0"
+             src={RESTAURANT_IMAGES.logo}
           />
           <div className="flex flex-col min-w-0">
             <span className="font-sans text-[15px] font-semibold text-[#091510] tracking-tight truncate leading-tight">
-              Test Restaurang
+              Nordic Ember
             </span>
             <span className="font-sans text-[11px] text-[#725b38] uppercase tracking-widest truncate leading-none">
               {getSubTitle()}

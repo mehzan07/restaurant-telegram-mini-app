@@ -45,7 +45,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 {isSv ? 'Gästprofil & Pass' : 'Guest Pass & Profile'}
               </h3>
               <p className="font-sans text-[11px] text-[#725b38] uppercase tracking-wider">
-                Test Restaurang Stockholm
+                Nordic Ember Stockholm
               </p>
             </div>
           </div>
