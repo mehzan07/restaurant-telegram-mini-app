@@ -1,4 +1,3 @@
-You can use the following content.
 # Nordic Ember — Restaurant Telegram Mini App
 
 Nordic Ember is a full-stack restaurant application built as a practical example of developing a modern web application and integrating it with Telegram.
@@ -24,8 +23,6 @@ Typical files include:
 - `.ts` — TypeScript
 - `.tsx` — TypeScript with React components
 
----
-
 ### React
 
 React is the frontend UI library.
@@ -41,8 +38,6 @@ It creates the parts of Nordic Ember that customers see and interact with, inclu
 - English/Swedish interface
 
 React runs primarily in the user's web browser.
-
----
 
 ### Node.js
 
@@ -62,12 +57,19 @@ When we run:
 
 ```powershell
 npm run server
+```
 
 the Nordic Ember backend runs through Node.js.
-Express
+
+### Express
+
 Express is the web framework used by the Node.js backend.
+
 It makes it easier to create HTTP/API endpoints that allow the React frontend to communicate with the server.
+
 For example:
+
+```text
 React reservation form
         ↓
 HTTP request
@@ -77,28 +79,64 @@ Express API
 Reservation processing
         ↓
 Database + Email
+```
 
-SQLite
+### Vite
+
+Vite is used as the frontend development and build tool.
+
+During development, Vite starts the React application on port `3000`.
+
+The frontend can be started with:
+
+```powershell
+npm run dev
+```
+
+### SQLite
+
 SQLite is currently used as the restaurant database.
+
 Reservation information is stored locally in:
+
+```text
 data/restaurant.db
+```
 
 SQLite is convenient during development because it does not require a separate database server.
+
 The database strategy may be changed when the application is prepared for production deployment.
-Telegram Bot API
+
+### Telegram Bot API
+
 Nordic Ember includes a Telegram bot:
+
+```text
 @NordicEmberBot
+```
 
 The Telegram integration is implemented in:
+
+```text
 server/telegram.ts
+```
 
 The backend communicates with the Telegram Bot API and currently supports commands including:
+
+```text
 /start
 /help
+```
 
 The long-term goal is to connect the deployed Nordic Ember application as a Telegram Mini App.
-Application Architecture
+
+---
+
+## Application Architecture
+
 The project can be viewed as two main parts:
+
+```text
                   NORDIC EMBER
                        │
           ┌────────────┴────────────┐
@@ -114,16 +152,25 @@ The project can be viewed as two main parts:
                          ┌──────────┼──────────┐
                          │          │          │
                       SQLite      Email     Telegram
+```
 
 In simple terms:
-- TypeScript = programming language
-- React = frontend/user interface
-- Node.js = runtime that executes the backend
-- Express = web/API framework running on Node.js
-- SQLite = database
-- Telegram Bot API = communication between Nordic Ember and Telegram
-Project Structure
+
+- **TypeScript** = programming language
+- **React** = frontend/user interface library
+- **Vite** = frontend development and build tool
+- **Node.js** = runtime that executes the backend
+- **Express** = web/API framework running on Node.js
+- **SQLite** = database
+- **Telegram Bot API** = communication between Nordic Ember and Telegram
+
+---
+
+## Project Structure
+
 A simplified project structure is:
+
+```text
 restaurant-telegram-mini-app/
 │
 ├── src/
@@ -152,36 +199,66 @@ restaurant-telegram-mini-app/
 ├── tsconfig.json
 ├── vite.config.ts
 └── README.md
+```
 
-src/
+### `src/`
+
 Contains the React frontend application.
-server/
+
+### `server/`
+
 Contains the Node.js/Express backend.
+
 Important backend files include:
-- index.ts — main API/server
-- database.ts — SQLite database handling
-- email.ts — reservation confirmation email
-- telegram.ts — Telegram Bot API integration
-public/
+
+- `index.ts` — main API/server
+- `database.ts` — SQLite database handling
+- `email.ts` — reservation confirmation email
+- `telegram.ts` — Telegram Bot API integration
+
+### `public/`
+
 Contains static assets such as restaurant and dish images.
-data/
+
+### `data/`
+
 Contains the development SQLite database.
-Docs/
+
+### `Docs/`
+
 Contains additional project and technical documentation.
-Environment Variables
-Sensitive configuration is stored in:
+
+---
+
+## Environment Variables
+
+Sensitive configuration is stored locally in:
+
+```text
 .env
+```
 
 This includes credentials such as:
+
 - SMTP/email configuration
 - Telegram bot token
-The real .env file must never be committed to GitHub.
-The repository instead contains:
-.env.example
 
-which documents the required environment variables without exposing real passwords or tokens.
-Current Features
+The real `.env` file must never be committed to GitHub.
+
+The repository instead contains:
+
+```text
+.env.example
+```
+
+This file documents the required environment variables without exposing real passwords, tokens, or other secrets.
+
+---
+
+## Current Features
+
 The application currently includes:
+
 - Responsive restaurant interface
 - English and Swedish language support
 - Seasonal restaurant menu
@@ -190,20 +267,32 @@ The application currently includes:
 - Multiple seating areas
 - Reservation validation
 - SQLite reservation storage
-- Email confirmation
+- Reservation confirmation email
 - Telegram bot integration
-- /start Telegram command
-- /help Telegram command
+- `/start` Telegram command
+- `/help` Telegram command
 - Telegram command menu
-Telegram Mini App Status
-The Telegram bot is operational, but the full Mini App connection requires a publicly accessible HTTPS deployment.
-Current development addresses such as:
-http://localhost:3000
-http://localhost:3001
 
-cannot be used as the final Telegram Mini App URL.
+---
+
+## Telegram Mini App Status
+
+The Telegram bot is operational, but the full Mini App connection requires a publicly accessible HTTPS deployment.
+
+During local development, the application uses:
+
+```text
+Frontend: http://localhost:3000
+Backend:  http://localhost:3001
+```
+
+These local addresses cannot be used as the final Telegram Mini App URL because they are accessible only from the local development computer.
+
 The next major stage of the project is therefore deployment.
-After deployment:
+
+The planned flow is:
+
+```text
 GitHub Repository
        ↓
 Hosting Platform
@@ -213,31 +302,199 @@ Public HTTPS URL
 @NordicEmberBot
        ↓
 Telegram Mini App
+```
 
-Development
-Install dependencies:
+---
+
+## Development
+
+### Install Dependencies
+
+After cloning the repository, install the required npm packages:
+
+```powershell
 npm install
+```
 
-Start the backend:
+### Start the Frontend
+
+Start the React/Vite frontend:
+
+```powershell
+npm run dev
+```
+
+The frontend development server runs on:
+
+```text
+http://localhost:3000
+```
+
+The `package.json` script used for this is:
+
+```text
+vite --port=3000 --host=0.0.0.0
+```
+
+### Start the Backend
+
+Open a second terminal and start the Node.js/Express backend:
+
+```powershell
 npm run server
+```
 
-Start the frontend using the development command defined in package.json.
-Security
-Never commit:
-- .env
+The backend API runs on:
+
+```text
+http://localhost:3001
+```
+
+The `package.json` script used for the backend is:
+
+```text
+tsx server/index.ts
+```
+
+During local development, both processes should normally be running:
+
+```text
+Terminal 1
+npm run dev
+      ↓
+React + Vite frontend
+http://localhost:3000
+
+
+Terminal 2
+npm run server
+      ↓
+Node.js + Express backend
+http://localhost:3001
+```
+
+When the backend starts successfully, output similar to the following is displayed:
+
+```text
+SQLite database ready: ...\data\restaurant.db
+Nordic Ember Telegram bot started.
+Nordic Ember API running at http://localhost:3001
+```
+
+### Build for Production
+
+Create the production frontend build with:
+
+```powershell
+npm run build
+```
+
+Vite creates the optimized production frontend files.
+
+### Preview the Production Build
+
+Preview the production frontend locally with:
+
+```powershell
+npm run preview
+```
+
+### TypeScript Check
+
+Run TypeScript checking without generating output:
+
+```powershell
+npm run lint
+```
+
+The current `lint` script executes:
+
+```text
+tsc --noEmit
+```
+
+so this command currently performs TypeScript type checking rather than ESLint-based linting.
+
+---
+
+## Local Development Flow
+
+When developing Nordic Ember locally, the application works approximately like this:
+
+```text
+Customer
+   ↓
+React frontend
+localhost:3000
+   ↓
+HTTP/API request
+   ↓
+Express backend
+localhost:3001
+   ↓
+Node.js
+   │
+   ├── SQLite database
+   │
+   ├── Reservation processing
+   │
+   ├── Confirmation email
+   │
+   └── Telegram bot
+```
+
+This separation is important:
+
+- React handles the customer interface.
+- Vite serves the frontend during development.
+- Express provides the API.
+- Node.js runs the backend.
+- SQLite stores reservation data.
+- Nodemailer handles reservation confirmation email.
+- Telegram integration connects the backend to the Nordic Ember bot.
+
+---
+
+## Security
+
+Never commit sensitive information such as:
+
+- `.env`
 - Telegram bot tokens
 - SMTP passwords
 - API keys
-- other production credentials
-If a Telegram bot token is accidentally exposed, revoke it through BotFather and create a new token.
-Current Project Status
+- production credentials
+
+The `.env` file is used locally for the real credentials and must remain excluded from Git.
+
+Use `.env.example` to document the required environment variables without storing real credentials.
+
+If a Telegram bot token is accidentally exposed, revoke it through BotFather and generate a new token.
+
+---
+
+## Current Project Status
+
 Nordic Ember currently works locally as a React + TypeScript frontend with a Node.js/Express backend.
-The reservation database, confirmation email system, and Telegram bot have been tested locally.
-The next major task is to deploy the application to a hosting platform that supports Node.js and HTTPS. After deployment, the public URL will be connected to @NordicEmberBot and tested as a Telegram Mini App.
 
-One small point: before committing this README, I would check your `package.json` so we can put the **exact frontend command** in the Development section instead of saying “using the development command defined in `package.json`.”
+The following components have been implemented and tested locally:
 
-You can run:
+- Restaurant frontend
+- Responsive user interface
+- English and Swedish support
+- Restaurant menu
+- Reservation workflow
+- Seating-area selection
+- SQLite database
+- Reservation storage
+- Reservation confirmation email
+- Telegram bot
+- `/start` command
+- `/help` command
+- Telegram command menu
 
-```powershell
-Get-Content package.json
+The Telegram bot can currently communicate with users, but the Nordic Ember web application is still running locally.
+
+The next major task is to deploy the application to a hosting platform that supports Node.js and HTTPS.
+
+After deployment, Nordic Ember will receive a public HTTPS URL. That URL can then be configured in Telegram so that the restaurant application can be opened and tested as a Telegram Mini App through `@NordicEmberBot`.
