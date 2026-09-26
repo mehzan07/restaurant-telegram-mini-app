@@ -2,7 +2,26 @@ import Database from 'better-sqlite3';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const dataDirectory = path.resolve('data');
+// ---------------------------------------------------------
+// Database configuration
+// ---------------------------------------------------------
+//
+// Local development:
+//   DATABASE_DIR is not set, so SQLite uses:
+//   ./data/restaurant.db
+//
+// Production / Railway:
+//   DATABASE_DIR can point to a persistent Railway volume,
+//   for example:
+//   /data
+//
+// This allows the same application code to work both
+// locally and in production.
+// ---------------------------------------------------------
+
+const dataDirectory = process.env.DATABASE_DIR
+  ? path.resolve(process.env.DATABASE_DIR)
+  : path.resolve('data');
 
 if (!fs.existsSync(dataDirectory)) {
   fs.mkdirSync(dataDirectory, { recursive: true });
