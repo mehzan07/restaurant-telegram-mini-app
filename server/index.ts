@@ -3,6 +3,7 @@ import { randomInt } from 'node:crypto';
 import { db } from './database.js';
 import { sendReservationConfirmation } from './email.js';
 import 'dotenv/config';
+import './telegram';
 
 const app = express();
 const PORT = 3001;
