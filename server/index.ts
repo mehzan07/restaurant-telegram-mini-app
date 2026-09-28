@@ -1,4 +1,6 @@
 import express from 'express';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { randomInt } from 'node:crypto';
 import { db } from './database.js';
 import { sendReservationConfirmation } from './email.js';
@@ -391,6 +393,23 @@ app.get('/api/reservations', (_req, res) => {
       error: 'Unable to read reservations',
     });
   }
+});
+
+// ---------------------------------------------------------
+// Serve the React/Vite production frontend
+// ---------------------------------------------------------
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const distPath = path.resolve(__dirname, '../dist');
+
+app.use(express.static(distPath));
+
+// React SPA fallback.
+// API routes above are handled first; all other GET requests
+// return the React application.
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
 });
 
 // ---------------------------------------------------------
