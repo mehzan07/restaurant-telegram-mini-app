@@ -355,7 +355,13 @@ export interface BookingDateOption {
 export const CURRENT_DATE_STRING = '2026-09-20';
 
 export function getBaseCurrentDate(): Date {
-  return new Date(2026, 8, 20); // Year: 2026, Month: 8 (Sept), Day: 20
+  const now = new Date();
+
+  return new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
 }
 
 const EN_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
