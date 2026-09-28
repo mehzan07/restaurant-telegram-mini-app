@@ -12,12 +12,28 @@ type ReservationEmailData = {
   specialRequests: string;
 };
 
-// ---------------------------------------------------------
-// Build reservation email text
-// ---------------------------------------------------------
+export async function sendReservationConfirmation(
+  reservation: ReservationEmailData
+) {
+  // -------------------------------------------------------
+  // Railway / Production: use Resend
+  // -------------------------------------------------------
 
-function buildReservationEmail(reservation: ReservationEmailData) {
-  return `
+  const resendApiKey = process.env.RESEND_API_KEY;
+
+  if (resendApiKey) {
+    const resend = new Resend(resendApiKey);
+
+    const fromAddress =
+      process.env.RESEND_FROM ||
+      'Nordic Ember <booking@restaurant.softsolutionsahand.com>';
+
+    const { data, error } = await resend.emails.send({
+      from: fromAddress,
+      to: reservation.email,
+      subject: `Nordic Ember - Reservation ${reservation.id}`,
+
+      text: `
 Hello ${reservation.fullName},
 
 Thank you for your reservation at Nordic Ember.
@@ -38,52 +54,33 @@ Please keep your booking reference if you need to contact the restaurant about y
 
 Best regards,
 Nordic Ember
-  `.trim();
-}
+      `.trim(),
+    });
 
-// ---------------------------------------------------------
-// Send using Resend
-// Used on Railway when RESEND_API_KEY is configured
-// ---------------------------------------------------------
+    if (error) {
+      console.error('Resend email error:', error);
 
-async function sendWithResend(
-  reservation: ReservationEmailData,
-  apiKey: string
-) {
-  const resend = new Resend(apiKey);
+      return {
+        sent: false,
+        reason: 'RESEND_ERROR',
+      };
+    }
 
-  const { data, error } = await resend.emails.send({
-    from: 'Nordic Ember <onboarding@resend.dev>',
-    to: reservation.email,
-    subject: `Nordic Ember - Reservation ${reservation.id}`,
-    text: buildReservationEmail(reservation),
-  });
-
-  if (error) {
-    throw new Error(
-      `Resend email failed: ${error.message}`
+    console.log(
+      `Reservation confirmation email sent with Resend to ${reservation.email}`
     );
+
+    console.log('Resend email ID:', data?.id);
+
+    return {
+      sent: true,
+    };
   }
 
-  console.log(
-    `Reservation confirmation email sent with Resend to ${reservation.email}`
-  );
+  // -------------------------------------------------------
+  // Local development: use SMTP
+  // -------------------------------------------------------
 
-  return {
-    sent: true,
-    provider: 'resend',
-    id: data?.id,
-  };
-}
-
-// ---------------------------------------------------------
-// Send using SMTP / Nodemailer
-// Used locally when RESEND_API_KEY is not configured
-// ---------------------------------------------------------
-
-async function sendWithSmtp(
-  reservation: ReservationEmailData
-) {
   const {
     SMTP_HOST,
     SMTP_PORT,
@@ -100,13 +97,12 @@ async function sendWithSmtp(
     !SMTP_FROM
   ) {
     console.log(
-      'Email not sent: SMTP environment variables are not configured.'
+      'Email not sent: neither Resend nor SMTP is configured.'
     );
 
     return {
       sent: false,
-      provider: 'smtp',
-      reason: 'SMTP_NOT_CONFIGURED',
+      reason: 'EMAIL_NOT_CONFIGURED',
     };
   }
 
@@ -120,7 +116,6 @@ async function sendWithSmtp(
       pass: SMTP_PASS,
     },
 
-    // Prevent SMTP problems from freezing the reservation flow.
     connectionTimeout: 5000,
     greetingTimeout: 5000,
     socketTimeout: 10000,
@@ -130,7 +125,29 @@ async function sendWithSmtp(
     from: SMTP_FROM,
     to: reservation.email,
     subject: `Nordic Ember - Reservation ${reservation.id}`,
-    text: buildReservationEmail(reservation),
+
+    text: `
+Hello ${reservation.fullName},
+
+Thank you for your reservation at Nordic Ember.
+
+Booking reference: ${reservation.id}
+Date: ${reservation.date}
+Time: ${reservation.time}
+Guests: ${reservation.guests}
+Seating area: ${reservation.seatingArea}
+
+${
+  reservation.specialRequests
+    ? `Special requests: ${reservation.specialRequests}`
+    : ''
+}
+
+Please keep your booking reference if you need to contact the restaurant about your reservation.
+
+Best regards,
+Nordic Ember
+    `.trim(),
   });
 
   console.log(
@@ -139,39 +156,5 @@ async function sendWithSmtp(
 
   return {
     sent: true,
-    provider: 'smtp',
   };
-}
-
-// ---------------------------------------------------------
-// Main email function
-//
-// Railway:
-//   RESEND_API_KEY exists -> Resend
-//
-// Local development:
-//   No RESEND_API_KEY -> SMTP / Gmail
-// ---------------------------------------------------------
-
-export async function sendReservationConfirmation(
-  reservation: ReservationEmailData
-) {
-  const resendApiKey = process.env.RESEND_API_KEY;
-
-  if (resendApiKey) {
-    console.log(
-      'Email provider: Resend'
-    );
-
-    return sendWithResend(
-      reservation,
-      resendApiKey
-    );
-  }
-
-  console.log(
-    'Email provider: SMTP'
-  );
-
-  return sendWithSmtp(reservation);
 }
