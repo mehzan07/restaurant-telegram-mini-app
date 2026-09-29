@@ -4,7 +4,7 @@ Nordic Ember is a full-stack restaurant application built as a practical example
 
 The application allows customers to explore a restaurant, browse the seasonal menu, view dishes, reserve a table, and receive reservation confirmation by email.
 
-The project is also being developed as a Telegram Mini App so that customers can eventually open the restaurant application directly inside Telegram through `@NordicEmberBot`.
+Nordic Ember is deployed publicly on Railway and is configured as a working Telegram Mini App through `@NordicEmberBot`.
 
 ---
 
@@ -128,7 +128,7 @@ The backend communicates with the Telegram Bot API and currently supports comman
 /help
 ```
 
-The long-term goal is to connect the deployed Nordic Ember application as a Telegram Mini App.
+The deployed Nordic Ember application is connected to Telegram as a working Mini App.
 
 ---
 
@@ -242,6 +242,7 @@ This includes credentials such as:
 
 - SMTP/email configuration
 - Telegram bot token
+- Resend API key and production sender configuration
 
 The real `.env` file must never be committed to GitHub.
 
@@ -277,32 +278,21 @@ The application currently includes:
 
 ## Telegram Mini App Status
 
-The Telegram bot is operational, but the full Mini App connection requires a publicly accessible HTTPS deployment.
+Nordic Ember is deployed publicly on Railway over HTTPS and is configured as a working Telegram Mini App.
 
-During local development, the application uses:
-
-```text
-Frontend: http://localhost:3000
-Backend:  http://localhost:3001
-```
-
-These local addresses cannot be used as the final Telegram Mini App URL because they are accessible only from the local development computer.
-
-The next major stage of the project is therefore deployment.
-
-The planned flow is:
+Telegram bot:
 
 ```text
-GitHub Repository
-       ↓
-Hosting Platform
-       ↓
-Public HTTPS URL
-       ↓
 @NordicEmberBot
-       ↓
-Telegram Mini App
 ```
+
+Direct Mini App link:
+
+```text
+https://t.me/NordicEmberBot/restaurant
+```
+
+The same Railway-hosted production application can be used in a normal web browser or inside Telegram. The Telegram mobile reservation flow and customer confirmation email delivery have been tested successfully.
 
 ---
 
@@ -473,28 +463,62 @@ If a Telegram bot token is accidentally exposed, revoke it through BotFather and
 
 ---
 
-## Current Project Status
+## Current Project Status — V8
 
-Nordic Ember currently works locally as a React + TypeScript frontend with a Node.js/Express backend.
+Nordic Ember V8 is a complete working demonstration application.
 
-The following components have been implemented and tested locally:
+The project now includes:
 
-- Restaurant frontend
-- Responsive user interface
+- React + TypeScript restaurant frontend
+- Node.js + Express backend
 - English and Swedish support
-- Restaurant menu
-- Reservation workflow
-- Seating-area selection
-- SQLite database
-- Reservation storage
-- Reservation confirmation email
-- Telegram bot
-- `/start` command
-- `/help` command
-- Telegram command menu
+- Restaurant menu and reservation workflow
+- SQLite reservation storage
+- Local confirmation email through Nodemailer/SMTP
+- Railway production deployment
+- Persistent production storage
+- Production confirmation email through Resend
+- Verified restaurant email domain `restaurant.softsolutionsahand.com`
+- Production sender `booking@restaurant.softsolutionsahand.com`
+- Telegram bot `@NordicEmberBot`
+- Working Telegram Mini App
+- Telegram menu configuration and direct Mini App link
+- Successful mobile Telegram reservation testing
+- Successful customer confirmation email testing
+- Production deployment documentation
 
-The Telegram bot can currently communicate with users, but the Nordic Ember web application is still running locally.
+### Production Services
 
-The next major task is to deploy the application to a hosting platform that supports Node.js and HTTPS.
+- **Hosting:** Railway
+- **Production email:** Resend
+- **DNS:** Miss Hosting
+- **Source control:** GitHub
+- **Telegram configuration:** BotFather
+- **Stable Git tag:** `v1.8.0`
 
-After deployment, Nordic Ember will receive a public HTTPS URL. That URL can then be configured in Telegram so that the restaurant application can be opened and tested as a Telegram Mini App through `@NordicEmberBot`.
+### Live Application
+
+Web application:
+
+```text
+https://restaurant-telegram-mini-app-production.up.railway.app
+```
+
+Telegram Mini App:
+
+```text
+https://t.me/NordicEmberBot/restaurant
+```
+
+### Production Email Architecture
+
+Local development continues to use Nodemailer/SMTP for email testing. Production uses the Resend API with the verified restaurant domain.
+
+```text
+Local development → Nodemailer / SMTP → Customer email
+Production → Railway → Resend → Customer email
+```
+
+The complete Railway, Resend, Miss Hosting, and Telegram deployment configuration is documented in the `Docs/` directory.
+
+Nordic Ember V8 demonstrates the complete path from local full-stack development to a publicly deployed restaurant web application with production email delivery and Telegram Mini App integration.
