@@ -17,6 +17,7 @@ import { MenuView } from './views/MenuView';
 import { BookTableView } from './views/BookTableView';
 import { AboutView } from './views/AboutView';
 import { ContactView } from './views/ContactView';
+import { AdminView } from './views/AdminView';
 
 // ---------------------------------------------------------
 // URL / tab helpers
@@ -56,6 +57,10 @@ const getTabFromPath = (pathname: string): TabView => {
 };
 
 export default function App() {
+  if (window.location.pathname === '/admin' || window.location.pathname.startsWith('/admin/')) {
+    return <AdminView />;
+  }
+
   const [currentTab, setCurrentTab] = useState<TabView>(() =>
     getTabFromPath(window.location.pathname)
   );

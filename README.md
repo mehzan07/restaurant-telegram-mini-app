@@ -522,3 +522,25 @@ Production → Railway → Resend → Customer email
 The complete Railway, Resend, Miss Hosting, and Telegram deployment configuration is documented in the `Docs/` directory.
 
 Nordic Ember V8 demonstrates the complete path from local full-stack development to a publicly deployed restaurant web application with production email delivery and Telegram Mini App integration.
+
+---
+
+## V9 Restaurant Admin & Reservation Management
+
+V9 adds a private restaurant-staff interface at `/admin` for managing reservations received by phone, walk-in, web, or Telegram.
+
+Admin capabilities include:
+
+- Create a reservation manually for a customer who calls the restaurant.
+- Search by reservation reference, guest name, phone number, or email.
+- Filter reservations by date and status.
+- Edit date, time, guest count, seating area, contact details, special requests, and internal notes.
+- Check guests in when they arrive.
+- Track `confirmed`, `arrived`, `completed`, `cancelled`, and `no-show` status.
+- Cancel reservations while retaining the history in the database.
+- Permanently delete a reservation when truly required.
+- View today's reservation and guest totals.
+
+The admin interface is protected by `ADMIN_PASSWORD`. Production must configure `ADMIN_PASSWORD` and preferably a separate `ADMIN_SESSION_SECRET` in Railway Variables. Admin sessions expire after eight hours and are stored only in the browser session storage.
+
+Existing V8 databases are migrated automatically on startup with new status, source, update-time, internal-note, and arrival-time fields.

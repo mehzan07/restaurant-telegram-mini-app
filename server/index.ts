@@ -352,47 +352,235 @@ return res.status(201).json({
 });
 
 // ---------------------------------------------------------
-// Get all reservations
-//
-// DEVELOPMENT / TESTING ONLY.
-//
-// This endpoint exposes customer information.
-// It must be protected or removed before production.
+// V9 Restaurant Admin API
 // ---------------------------------------------------------
 
-app.get('/api/reservations', (_req, res) => {
+import { createHash, timingSafeEqual } from 'node:crypto';
+
+const ADMIN_SESSION_HOURS = 8;
+const adminPassword = process.env.ADMIN_PASSWORD ?? '';
+const adminSecret = process.env.ADMIN_SESSION_SECRET || adminPassword;
+
+const safeEqual = (a: string, b: string) => {
+  const aa = Buffer.from(a);
+  const bb = Buffer.from(b);
+  return aa.length === bb.length && timingSafeEqual(aa, bb);
+};
+
+const makeAdminToken = (expiresAt: number) => {
+  const payload = String(expiresAt);
+  const signature = createHash('sha256').update(`${payload}:${adminSecret}`).digest('hex');
+  return `${payload}.${signature}`;
+};
+
+const verifyAdminToken = (token: string) => {
+  if (!adminPassword || !adminSecret) return false;
+  const [expires, signature] = token.split('.');
+  const expiresAt = Number(expires);
+  if (!expires || !signature || !Number.isFinite(expiresAt) || Date.now() > expiresAt) return false;
+  return safeEqual(makeAdminToken(expiresAt), token);
+};
+
+const requireAdmin: express.RequestHandler = (req, res, next) => {
+  const auth = req.header('authorization') ?? '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+  if (!verifyAdminToken(token)) return res.status(401).json({ error: 'Admin authentication required' });
+  next();
+};
+
+app.post('/api/admin/login', (req, res) => {
+  if (!adminPassword) {
+    return res.status(503).json({ error: 'ADMIN_PASSWORD is not configured on the server' });
+  }
+  const password = typeof req.body?.password === 'string' ? req.body.password : '';
+  if (!safeEqual(password, adminPassword)) return res.status(401).json({ error: 'Invalid password' });
+  const expiresAt = Date.now() + ADMIN_SESSION_HOURS * 60 * 60 * 1000;
+  return res.json({ success: true, token: makeAdminToken(expiresAt), expiresAt });
+});
+
+const reservationSelect = `
+  SELECT id, CAST(guests AS INTEGER) AS guests, date, time,
+    seating_area AS seatingArea, full_name AS fullName,
+    country_code AS countryCode, phone, email,
+    special_requests AS specialRequests, created_at AS createdAt,
+    COALESCE(status, 'confirmed') AS status,
+    COALESCE(source, 'online') AS source,
+    updated_at AS updatedAt,
+    COALESCE(admin_notes, '') AS adminNotes,
+    arrived_at AS arrivedAt
+  FROM reservations`;
+
+
+app.get('/api/admin/reservations', requireAdmin, (req, res) => {
   try {
-    const reservations = db
-      .prepare(`
-        SELECT
-          id,
-          guests,
-          date,
-          time,
-          seating_area AS seatingArea,
-          full_name AS fullName,
-          country_code AS countryCode,
-          phone,
-          email,
-          special_requests AS specialRequests,
-          created_at AS createdAt
-        FROM reservations
-        ORDER BY created_at DESC
-      `)
-      .all();
+    const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
+    const status = typeof req.query.status === 'string' ? req.query.status.trim() : '';
+    const date = typeof req.query.date === 'string' ? req.query.date.trim() : '';
+
+    const where: string[] = [];
+    const params: unknown[] = [];
+
+    if (q) {
+      const like = `%${q.toLowerCase()}%`;
+      const phoneDigits = q.replace(/\D/g, '');
+
+      if (phoneDigits.length >= 6) {
+        let internationalPhone = phoneDigits;
+
+        // Swedish local format:
+        // 0730318625 -> 46730318625
+        if (phoneDigits.startsWith('0')) {
+          internationalPhone = `46${phoneDigits.substring(1)}`;
+        }
+
+        // Database stores:
+        // country_code = +46
+        // phone        = 730318625
+        //
+        // The SQL expression below creates:
+        // 46730318625
+        const fullPhoneSql = `
+          REPLACE(
+            REPLACE(
+              REPLACE(
+                REPLACE(
+                  REPLACE(
+                    COALESCE(country_code, '') || COALESCE(phone, ''),
+                    '+', ''
+                  ),
+                  ' ', ''
+                ),
+                '-', ''
+              ),
+              '(', ''
+            ),
+            ')', ''
+          )
+        `;
+
+        where.push(`(
+          LOWER(id) LIKE ?
+          OR LOWER(full_name) LIKE ?
+          OR LOWER(email) LIKE ?
+          OR ${fullPhoneSql} LIKE ?
+        )`);
+
+        params.push(
+          like,
+          like,
+          like,
+          `%${internationalPhone}%`
+        );
+      } else {
+        where.push(`(
+          LOWER(id) LIKE ?
+          OR LOWER(full_name) LIKE ?
+          OR LOWER(phone) LIKE ?
+          OR LOWER(email) LIKE ?
+        )`);
+
+        params.push(like, like, like, like);
+      }
+    }
+
+    if (status && status !== 'all') {
+      where.push('status = ?');
+      params.push(status);
+    }
+
+    if (date) {
+      where.push('date = ?');
+      params.push(date);
+    }
+
+    const sql = `${reservationSelect} ${
+      where.length ? `WHERE ${where.join(' AND ')}` : ''
+    } ORDER BY date ASC, time ASC, created_at DESC`;
+
+    const reservations = db.prepare(sql).all(...params);
 
     return res.json({
       success: true,
-      count: reservations.length,
-      reservations,
+      reservations
     });
   } catch (error) {
-    console.error('Unable to read reservations:', error);
-
+    console.error('Admin reservation search failed:', error);
     return res.status(500).json({
-      error: 'Unable to read reservations',
+      error: 'Unable to read reservations'
     });
   }
+});
+
+
+
+app.post('/api/admin/reservations', requireAdmin, async (req, res) => {
+  try {
+    const b = req.body ?? {};
+    const guests = Number(b.guests);
+    if (!Number.isInteger(guests) || guests < 1 || guests > 30) return res.status(400).json({ error: 'Guests must be between 1 and 30' });
+    if (typeof b.fullName !== 'string' || b.fullName.trim().length < 2) return res.status(400).json({ error: 'Guest name is required' });
+    if (typeof b.phone !== 'string' || b.phone.trim().length < 6) return res.status(400).json({ error: 'Phone number is required' });
+    if (typeof b.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(b.date)) return res.status(400).json({ error: 'Valid date is required' });
+    if (typeof b.time !== 'string' || !/^\d{2}:\d{2}$/.test(b.time)) return res.status(400).json({ error: 'Valid time is required' });
+    const id = `TR-${Date.now().toString(36).toUpperCase()}-${randomInt(1000, 10000)}`;
+    const now = new Date().toISOString();
+    const email = typeof b.email === 'string' ? b.email.trim().toLowerCase() : '';
+    const reservation = {
+      id, guests, date: b.date, time: b.time,
+      seatingArea: String(b.seatingArea || 'Main Dining Room (Matsal)'),
+      fullName: b.fullName.trim(), countryCode: String(b.countryCode || '+46'),
+      phone: b.phone.trim(), email,
+      specialRequests: typeof b.specialRequests === 'string' ? b.specialRequests.trim() : '',
+      createdAt: now,
+    };
+    db.prepare(`INSERT INTO reservations
+      (id, guests, date, time, seating_area, full_name, country_code, phone, email, special_requests, created_at, status, source, updated_at, admin_notes)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'confirmed', 'phone', ?, ?)`)
+      .run(id, String(guests), reservation.date, reservation.time, reservation.seatingArea, reservation.fullName,
+        reservation.countryCode, reservation.phone, reservation.email, reservation.specialRequests, now, now,
+        typeof b.adminNotes === 'string' ? b.adminNotes.trim() : '');
+    let emailSent = false;
+    if (email) {
+      try { emailSent = (await sendReservationConfirmation(reservation)).sent; } catch (e) { console.error('Admin booking email failed:', e); }
+    }
+    return res.status(201).json({ success: true, reservation: { ...reservation, status: 'confirmed', source: 'phone' }, emailSent });
+  } catch (error) {
+    console.error('Admin create failed:', error);
+    return res.status(500).json({ error: 'Unable to create reservation' });
+  }
+});
+
+app.put('/api/admin/reservations/:id', requireAdmin, (req, res) => {
+  try {
+    const b = req.body ?? {};
+    const guests = Number(b.guests);
+    if (!Number.isInteger(guests) || guests < 1 || guests > 30) return res.status(400).json({ error: 'Guests must be between 1 and 30' });
+    const result = db.prepare(`UPDATE reservations SET
+      guests=?, date=?, time=?, seating_area=?, full_name=?, country_code=?, phone=?, email=?,
+      special_requests=?, admin_notes=?, updated_at=? WHERE id=?`)
+      .run(String(guests), String(b.date), String(b.time), String(b.seatingArea), String(b.fullName).trim(),
+        String(b.countryCode || '+46'), String(b.phone).trim(), String(b.email || '').trim().toLowerCase(),
+        String(b.specialRequests || '').trim(), String(b.adminNotes || '').trim(), new Date().toISOString(), req.params.id);
+    if (!result.changes) return res.status(404).json({ error: 'Reservation not found' });
+    return res.json({ success: true });
+  } catch (error) { console.error('Admin update failed:', error); return res.status(500).json({ error: 'Unable to update reservation' }); }
+});
+
+app.patch('/api/admin/reservations/:id/status', requireAdmin, (req, res) => {
+  const allowed = ['confirmed', 'arrived', 'completed', 'cancelled', 'no-show'];
+  const status = String(req.body?.status || '');
+  if (!allowed.includes(status)) return res.status(400).json({ error: 'Invalid reservation status' });
+  const now = new Date().toISOString();
+  const result = db.prepare(`UPDATE reservations SET status=?, updated_at=?, arrived_at=CASE WHEN ?='arrived' THEN ? ELSE arrived_at END WHERE id=?`)
+    .run(status, now, status, now, req.params.id);
+  if (!result.changes) return res.status(404).json({ error: 'Reservation not found' });
+  return res.json({ success: true });
+});
+
+app.delete('/api/admin/reservations/:id', requireAdmin, (req, res) => {
+  const result = db.prepare('DELETE FROM reservations WHERE id = ?').run(req.params.id);
+  if (!result.changes) return res.status(404).json({ error: 'Reservation not found' });
+  return res.json({ success: true });
 });
 
 // ---------------------------------------------------------
