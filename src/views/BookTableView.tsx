@@ -1037,7 +1037,7 @@ const handleFinalConfirm = async () => {
             className="fixed inset-0 bg-[#091510]/50 backdrop-blur-sm transition-opacity"
             onClick={handleDoneReset}
           />
-          <div className="relative w-full max-w-lg bg-white rounded-t-3xl p-6 shadow-2xl z-10 flex flex-col mb-16 border-t border-[#c3c8c3]/40 animate-in slide-in-from-bottom duration-300">
+          <div className="relative w-full max-w-lg md:max-w-2xl lg:max-w-3xl bg-white rounded-t-3xl p-6 shadow-2xl z-10 flex flex-col mb-16 border-t border-[#c3c8c3]/40 animate-in slide-in-from-bottom duration-300">
             <div className="w-12 h-1 bg-[#c3c8c3] rounded-full mx-auto mb-4"></div>
 
             <div className="flex items-center justify-center w-14 h-14 rounded-full bg-[#d8e6dc] text-[#091510] mx-auto mb-3">

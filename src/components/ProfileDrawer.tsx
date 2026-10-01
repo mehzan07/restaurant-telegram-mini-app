@@ -189,7 +189,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
               </span>
             </div>
             <a
-              href="https://t.me/TestRestaurantBot"
+              href="https://t.me/NordicEmberBot"
               target="_blank"
               rel="noopener noreferrer"
               className="px-3 py-1 rounded-full bg-[#091510] text-white text-[11px] font-medium shrink-0"

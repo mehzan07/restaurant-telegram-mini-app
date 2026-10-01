@@ -13,40 +13,74 @@ export const Navigation: React.FC<NavigationProps> = ({
   language,
 }) => {
   const tabs = [
-    {
-      id: 'home' as TabView,
-      label: language === 'SV' ? 'Hem' : 'Home',
-      icon: 'cottage',
-    },
-    {
-      id: 'menu' as TabView,
-      label: language === 'SV' ? 'Meny' : 'Menu',
-      icon: 'restaurant_menu',
-    },
-    {
-      id: 'book-table' as TabView,
-      label: language === 'SV' ? 'Boka bord' : 'Book Table',
-      icon: 'table_restaurant',
-      isAccent: true,
-    },
-    {
-      id: 'about' as TabView,
-      label: language === 'SV' ? 'Om oss' : 'About',
-      icon: 'auto_stories',
-    },
-    {
-      id: 'contact' as TabView,
-      label: language === 'SV' ? 'Kontakt' : 'Contact',
-      icon: 'location_on',
-    },
-  ];
-
+  {
+    id: 'home' as TabView,
+    label:
+      language === 'SV'
+        ? 'Hem'
+        : language === 'FA'
+        ? 'خانه'
+        : language === 'TR'
+        ? 'Ana Sayfa'
+        : 'Home',
+    icon: 'cottage',
+  },
+  {
+    id: 'menu' as TabView,
+    label:
+      language === 'SV'
+        ? 'Meny'
+        : language === 'FA'
+        ? 'منو'
+        : language === 'TR'
+        ? 'Menü'
+        : 'Menu',
+    icon: 'restaurant_menu',
+  },
+  {
+    id: 'book-table' as TabView,
+    label:
+      language === 'SV'
+        ? 'Boka bord'
+        : language === 'FA'
+        ? 'رزرو میز'
+        : language === 'TR'
+        ? 'Masa Rezervasyonu'
+        : 'Book Table',
+    icon: 'table_restaurant',
+    isAccent: true,
+  },
+  {
+    id: 'about' as TabView,
+    label:
+      language === 'SV'
+        ? 'Om oss'
+        : language === 'FA'
+        ? 'درباره ما'
+        : language === 'TR'
+        ? 'Hakkımızda'
+        : 'About',
+    icon: 'auto_stories',
+  },
+  {
+    id: 'contact' as TabView,
+    label:
+      language === 'SV'
+        ? 'Kontakt'
+        : language === 'FA'
+        ? 'تماس'
+        : language === 'TR'
+        ? 'İletişim'
+        : 'Contact',
+    icon: 'location_on',
+  },
+];
   return (
     <nav
       id="main-bottom-navigation"
       className="fixed bottom-0 inset-x-0 w-full z-40 pb-safe bg-[#fbf9f7]/95 backdrop-blur-xl border-t border-[#c3c8c3]/30 shadow-[0_-2px_12px_rgba(30,42,36,0.04)]"
     >
-      <div className="max-w-lg mx-auto h-16 px-2 flex items-center justify-around">
+      <div className="max-w-lg md:max-w-2xl lg:max-w-5xl mx-auto h-16 px-2 md:px-6 lg:px-8 flex items-center justify-around">
         {tabs.map((tab) => {
           const isActive = currentTab === tab.id;
           return (

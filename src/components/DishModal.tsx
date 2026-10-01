@@ -29,7 +29,7 @@ export const DishModal: React.FC<DishModalProps> = ({
       />
 
       {/* Modal Sheet */}
-      <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[#fbf9f7] rounded-t-3xl shadow-2xl z-10 flex flex-col p-6 pb-10 border-t border-[#c3c8c3]/40 animate-in slide-in-from-bottom duration-300">
+      <div className="relative w-full max-w-lg md:max-w-2xl lg:max-w-3xl max-h-[90vh] overflow-y-auto bg-[#fbf9f7] rounded-t-3xl shadow-2xl z-10 flex flex-col p-6 pb-10 border-t border-[#c3c8c3]/40 animate-in slide-in-from-bottom duration-300">
         {/* Handle */}
         <div className="w-12 h-1 rounded-full bg-[#e4e2e0] mx-auto mb-4 shrink-0" />
 

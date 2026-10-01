@@ -219,7 +219,7 @@ export default function App() {
       />
 
       {/* Main Screen Container */}
-      <main className="flex-1 w-full max-w-lg mx-auto pt-20 pb-20 px-4">
+      <main className="flex-1 w-full max-w-lg md:max-w-2xl lg:max-w-5xl mx-auto pt-20 pb-20 px-4 md:px-6 lg:px-8">
         {currentTab === 'home' && (
           <HomeView
             onNavigate={handleTabChange}

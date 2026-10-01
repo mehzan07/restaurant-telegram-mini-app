@@ -1,6 +1,6 @@
 export type TabView = 'home' | 'menu' | 'book-table' | 'about' | 'contact';
 
-export type Language = 'EN' | 'SV';
+export type Language = 'EN' | 'SV' | 'FA' | 'TR';
 
 export interface Dish {
   id: string;
