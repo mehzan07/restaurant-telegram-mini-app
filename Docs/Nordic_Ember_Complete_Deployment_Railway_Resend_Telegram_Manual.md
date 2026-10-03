@@ -1566,6 +1566,36 @@ customer experience.
 
 ------------------------------------------------------------------------
 
+## 50. Verify V10 Configurable Customer UI Languages
+
+Before the final production test, verify that the language configuration is available in the Admin Dashboard.
+
+Default configuration:
+
+```text
+English ✓
+Swedish ✓
+Farsi ✗
+Turkish ✗
+```
+
+Test the administrator workflow:
+
+1. Open `/admin`.
+2. Sign in.
+3. Locate **Visible languages**.
+4. Confirm the default selection.
+5. Enable Farsi temporarily.
+6. Click **Save language settings**.
+7. Open/refresh the customer application.
+8. Confirm the customer selector now includes Farsi.
+9. Disable Farsi again if the restaurant's default configuration should remain English + Swedish.
+10. Save again.
+11. Confirm the customer selector returns to English + Swedish.
+12. Restart the server and confirm the saved setting remains.
+
+The administrator does not need to edit code or run `nordic_ember_configurable_languages.py` for normal changes.
+
 ## 50. Final End-to-End Acceptance Test
 
 Before considering Nordic Ember complete, perform one final production
@@ -1589,6 +1619,18 @@ test.
 6.  Confirm the customer receives the email.
 7.  Verify the sender address.
 8.  Verify the booking details.
+
+### Language configuration check
+
+Confirm that:
+
+- the Admin Dashboard language controls are available;
+- English and Swedish are enabled by default for a fresh configuration;
+- Farsi and Turkish are disabled by default;
+- the administrator can save a different selection;
+- at least one language is enforced;
+- the customer selector reflects the saved selection;
+- the selection remains after a server restart/redeployment using persistent storage.
 
 ### Administration check
 

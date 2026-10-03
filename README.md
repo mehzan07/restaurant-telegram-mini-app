@@ -1,174 +1,118 @@
 # Nordic Ember — Restaurant Telegram Mini App
 
-Nordic Ember is a full-stack restaurant application built as a practical example of developing a modern web application and integrating it with Telegram.
+Nordic Ember is a full-stack restaurant application built as a practical example of developing a modern web application and integrating it with Telegram as a Mini App.
 
-The application allows customers to explore a restaurant, browse the seasonal menu, view dishes, reserve a table, and receive reservation confirmation by email.
+Customers can browse the restaurant, explore the menu, view dishes, make table reservations, view reservation information, contact the restaurant, and use the application from a normal browser or from Telegram.
 
-Nordic Ember is deployed publicly on Railway and is configured as a working Telegram Mini App through `@NordicEmberBot`.
+## Current Version Status
 
----
+The project currently includes the V9 administration functionality and the V10 configurable customer UI language feature.
+
+### V9 — Restaurant Admin Reservation Management
+
+The Admin Dashboard includes:
+
+- secure administrator login;
+- Today, This week, This month and Total reservation statistics;
+- reservation search and filtering;
+- reservation creation by staff;
+- reservation editing;
+- reservation status management;
+- reservation deletion;
+- return navigation between the restaurant application and Admin Dashboard.
+
+Supported reservation statuses are:
+
+- Confirmed
+- Arrived
+- Completed
+- Cancelled
+- Did not arrive
+
+### V10 — Configurable Customer UI Languages
+
+The administrator can now control which customer-facing interface languages are visible without changing source code and without running a script again.
+
+Supported UI languages:
+
+- English (`EN`)
+- Swedish (`SV`)
+- Farsi (`FA`)
+- Turkish (`TR`)
+
+Default configuration:
+
+```text
+English   ✓
+Swedish   ✓
+Farsi     ✗
+Turkish   ✗
+```
+
+The setting is stored in the SQLite database, so it is retained after the application is restarted.
+
+The customer language selector only shows the languages currently enabled by the administrator.
+
+At least one language must always remain enabled.
+
+The restaurant's menu and other restaurant content remain separate from this setting; the feature controls the customer interface language selector.
 
 ## Technology Overview
 
-Nordic Ember uses several technologies that have different responsibilities.
+### Frontend
 
-### TypeScript
+- React
+- TypeScript
+- Vite
 
-TypeScript is the main programming language used throughout the project.
+### Backend
 
-It extends JavaScript with type checking and is used in both the frontend and backend.
+- Node.js
+- Express
+- TypeScript
 
-Typical files include:
+### Database
 
-- `.ts` — TypeScript
-- `.tsx` — TypeScript with React components
+- SQLite
+- persistent application settings and reservation storage
 
-### React
+### Telegram
 
-React is the frontend UI library.
+- Telegram Bot API
+- Telegram bot: `@NordicEmberBot`
+- `/start`
+- `/help`
+- Telegram Mini App integration
 
-It creates the parts of Nordic Ember that customers see and interact with, including:
+### Production services
 
-- Home
-- Menu
-- Dish information
-- Book Table
-- About
-- Contact
-- English/Swedish interface
+- GitHub — source control
+- Railway — production hosting
+- Resend — production reservation email delivery
+- Miss Hosting — DNS management for `softsolutionsahand.com`
 
-React runs primarily in the user's web browser.
-
-### Node.js
-
-Node.js is the runtime environment used to execute the server-side JavaScript/TypeScript application.
-
-It allows our backend code to run outside the browser.
-
-In Nordic Ember, Node.js is responsible for running services such as:
-
-- the restaurant API
-- reservation processing
-- database access
-- confirmation email processing
-- Telegram bot communication
-
-When we run:
-
-```powershell
-npm run server
-```
-
-the Nordic Ember backend runs through Node.js.
-
-### Express
-
-Express is the web framework used by the Node.js backend.
-
-It makes it easier to create HTTP/API endpoints that allow the React frontend to communicate with the server.
-
-For example:
+## Architecture
 
 ```text
-React reservation form
-        ↓
-HTTP request
-        ↓
-Express API
-        ↓
-Reservation processing
-        ↓
-Database + Email
+Customer
+   ↓
+Browser or Telegram
+   ↓
+Nordic Ember Mini App
+   ↓
+React / TypeScript frontend
+   ↓
+Express / Node.js backend
+   ├── Reservation API
+   ├── Admin API
+   ├── Language configuration API
+   ├── SQLite database
+   └── Resend email delivery
 ```
 
-### Vite
-
-Vite is used as the frontend development and build tool.
-
-During development, Vite starts the React application on port `3000`.
-
-The frontend can be started with:
-
-```powershell
-npm run dev
-```
-
-### SQLite
-
-SQLite is currently used as the restaurant database.
-
-Reservation information is stored locally in:
-
-```text
-data/restaurant.db
-```
-
-SQLite is convenient during development because it does not require a separate database server.
-
-The database strategy may be changed when the application is prepared for production deployment.
-
-### Telegram Bot API
-
-Nordic Ember includes a Telegram bot:
-
-```text
-@NordicEmberBot
-```
-
-The Telegram integration is implemented in:
-
-```text
-server/telegram.ts
-```
-
-The backend communicates with the Telegram Bot API and currently supports commands including:
-
-```text
-/start
-/help
-```
-
-The deployed Nordic Ember application is connected to Telegram as a working Mini App.
-
----
-
-## Application Architecture
-
-The project can be viewed as two main parts:
-
-```text
-                  NORDIC EMBER
-                       │
-          ┌────────────┴────────────┐
-          │                         │
-       FRONTEND                  BACKEND
-          │                         │
-        React                    Express
-          │                         │
-      TypeScript                TypeScript
-          │                         │
-       Browser                   Node.js
-                                    │
-                         ┌──────────┼──────────┐
-                         │          │          │
-                      SQLite      Email     Telegram
-```
-
-In simple terms:
-
-- **TypeScript** = programming language
-- **React** = frontend/user interface library
-- **Vite** = frontend development and build tool
-- **Node.js** = runtime that executes the backend
-- **Express** = web/API framework running on Node.js
-- **SQLite** = database
-- **Telegram Bot API** = communication between Nordic Ember and Telegram
-
----
+Telegram is the customer entry point when the application is opened through `@NordicEmberBot`.
 
 ## Project Structure
-
-A simplified project structure is:
 
 ```text
 restaurant-telegram-mini-app/
@@ -185,13 +129,8 @@ restaurant-telegram-mini-app/
 │   └── telegram.ts
 │
 ├── public/
-│   └── images/
-│
 ├── data/
-│   └── restaurant.db
-│
 ├── Docs/
-│
 ├── .env
 ├── .env.example
 ├── .gitignore
@@ -201,346 +140,211 @@ restaurant-telegram-mini-app/
 └── README.md
 ```
 
-### `src/`
+## Important Files
 
-Contains the React frontend application.
+| Purpose | Main file |
+|---|---|
+| Main application state/routing | `App.tsx` |
+| Restaurant and menu data | `src/data/restaurantData.ts` |
+| Shared types | `src/types.ts` |
+| Header and language selector | `src/components/Header.tsx` |
+| Reservation page | `src/views/BookTableView.tsx` |
+| Admin dashboard | `src/views/AdminView.tsx` |
+| Backend/API/database integration | `server/index.ts` |
+| SQLite handling | `server/database.ts` |
+| Reservation email | `server/email.ts` |
+| Telegram integration | `server/telegram.ts` |
 
-### `server/`
+## Configurable Language Feature
 
-Contains the Node.js/Express backend.
+The one-time developer installation of the feature added persistent language settings to the application.
 
-Important backend files include:
-
-- `index.ts` — main API/server
-- `database.ts` — SQLite database handling
-- `email.ts` — reservation confirmation email
-- `telegram.ts` — Telegram Bot API integration
-
-### `public/`
-
-Contains static assets such as restaurant and dish images.
-
-### `data/`
-
-Contains the development SQLite database.
-
-### `Docs/`
-
-Contains additional project and technical documentation.
-
----
-
-## Environment Variables
-
-Sensitive configuration is stored locally in:
+The implementation uses the following endpoints:
 
 ```text
-.env
+GET  /api/config/languages
+GET  /api/admin/languages
+PUT  /api/admin/languages
 ```
 
-This includes credentials such as:
+The public endpoint supplies the customer-facing language selector configuration.
 
-- SMTP/email configuration
-- Telegram bot token
-- Resend API key and production sender configuration
+The Admin endpoints require administrator authentication.
 
-The real `.env` file must never be committed to GitHub.
+The language configuration is stored in the SQLite `app_settings` table under the `visible_languages` key.
 
-The repository instead contains:
+### Administrator workflow
 
-```text
-.env.example
-```
+1. Open the Admin Dashboard.
+2. Open the language configuration area.
+3. Enable or disable languages.
+4. Keep at least one language enabled.
+5. Click **Save language settings**.
+6. Open or refresh the restaurant application.
+7. Confirm that the customer language selector shows only the selected languages.
 
-This file documents the required environment variables without exposing real passwords, tokens, or other secrets.
-
----
-
-## Current Features
-
-The application currently includes:
-
-- Responsive restaurant interface
-- English and Swedish language support
-- Seasonal restaurant menu
-- Dish images and information
-- Table reservation workflow
-- Multiple seating areas
-- Reservation validation
-- SQLite reservation storage
-- Reservation confirmation email
-- Telegram bot integration
-- `/start` Telegram command
-- `/help` Telegram command
-- Telegram command menu
-
----
-
-## Telegram Mini App Status
-
-Nordic Ember is deployed publicly on Railway over HTTPS and is configured as a working Telegram Mini App.
-
-Telegram bot:
-
-```text
-@NordicEmberBot
-```
-
-Direct Mini App link:
-
-```text
-https://t.me/NordicEmberBot/restaurant
-```
-
-The same Railway-hosted production application can be used in a normal web browser or inside Telegram. The Telegram mobile reservation flow and customer confirmation email delivery have been tested successfully.
-
----
+No source-code change is required for normal restaurant administration.
 
 ## Development
 
-### Install Dependencies
-
-After cloning the repository, install the required npm packages:
+Install dependencies:
 
 ```powershell
 npm install
 ```
 
-### Start the Frontend
-
-Start the React/Vite frontend:
+Run the frontend development environment using the project command:
 
 ```powershell
 npm run dev
 ```
 
-The frontend development server runs on:
-
-```text
-http://localhost:3000
-```
-
-The `package.json` script used for this is:
-
-```text
-vite --port=3000 --host=0.0.0.0
-```
-
-### Start the Backend
-
-Open a second terminal and start the Node.js/Express backend:
+Run the backend when using the separate server workflow:
 
 ```powershell
 npm run server
 ```
 
-The backend API runs on:
+### Validation before commit
 
-```text
-http://localhost:3001
-```
-
-The `package.json` script used for the backend is:
-
-```text
-tsx server/index.ts
-```
-
-During local development, both processes should normally be running:
-
-```text
-Terminal 1
-npm run dev
-      ↓
-React + Vite frontend
-http://localhost:3000
-
-
-Terminal 2
-npm run server
-      ↓
-Node.js + Express backend
-http://localhost:3001
-```
-
-When the backend starts successfully, output similar to the following is displayed:
-
-```text
-SQLite database ready: ...\data\restaurant.db
-Nordic Ember Telegram bot started.
-Nordic Ember API running at http://localhost:3001
-```
-
-### Build for Production
-
-Create the production frontend build with:
-
-```powershell
-npm run build
-```
-
-Vite creates the optimized production frontend files.
-
-### Preview the Production Build
-
-Preview the production frontend locally with:
-
-```powershell
-npm run preview
-```
-
-### TypeScript Check
-
-Run TypeScript checking without generating output:
+Run:
 
 ```powershell
 npm run lint
+npm run build
 ```
 
-The current `lint` script executes:
+The current V10 implementation has passed both checks locally.
+
+## Database
+
+SQLite is used for reservation data and persistent application settings.
+
+The development database is located at:
 
 ```text
-tsc --noEmit
+data/restaurant.db
 ```
 
-so this command currently performs TypeScript type checking rather than ESLint-based linting.
+Production database storage must use persistent storage on the hosting platform so reservations and settings survive redeployments.
 
----
+Do not copy development/customer reservation data into another customer's production installation.
 
-## Local Development Flow
+## Environment Variables and Secrets
 
-When developing Nordic Ember locally, the application works approximately like this:
+Sensitive values belong in environment variables and must never be committed to GitHub.
+
+Examples include:
+
+- `ADMIN_PASSWORD`
+- `ADMIN_SESSION_SECRET`
+- `RESEND_API_KEY`
+- Telegram bot token
+- SMTP credentials used for local development, where applicable
+
+The real `.env` file must remain private.
+
+The repository should use `.env.example` to document required variables without exposing secrets.
+
+## Production Deployment
+
+The intended production flow is:
 
 ```text
-Customer
-   ↓
-React frontend
-localhost:3000
-   ↓
-HTTP/API request
-   ↓
-Express backend
-localhost:3001
-   ↓
-Node.js
-   │
-   ├── SQLite database
-   │
-   ├── Reservation processing
-   │
-   ├── Confirmation email
-   │
-   └── Telegram bot
+Local development
+      ↓
+Tests
+      ↓
+Git commit
+      ↓
+Push to GitHub main
+      ↓
+Railway deployment
+      ↓
+Public HTTPS application
+      ↓
+Telegram Mini App
 ```
 
-This separation is important:
+For production email:
 
-- React handles the customer interface.
-- Vite serves the frontend during development.
-- Express provides the API.
-- Node.js runs the backend.
-- SQLite stores reservation data.
-- Nodemailer handles reservation confirmation email.
-- Telegram integration connects the backend to the Nordic Ember bot.
+```text
+Railway
+   ↓
+Resend API
+   ↓
+Nordic Ember confirmation email
+```
 
----
+The configured restaurant sender is documented in the deployment manual and must not be confused with development SMTP settings.
+
+## Telegram
+
+The current bot is:
+
+```text
+@NordicEmberBot
+```
+
+The production Mini App is connected through Telegram configuration in BotFather.
+
+The Telegram project configuration and production URL are documented separately in:
+
+`Nordic_Ember_Complete_Deployment_Railway_Resend_Telegram_Manual.md`
 
 ## Security
 
-Never commit sensitive information such as:
+Never commit:
 
 - `.env`
 - Telegram bot tokens
+- Resend API keys
 - SMTP passwords
-- API keys
-- production credentials
+- Admin passwords
+- Admin session secrets
+- other production credentials
 
-The `.env` file is used locally for the real credentials and must remain excluded from Git.
+The Admin Dashboard protects reservation-management endpoints with administrator authentication.
 
-Use `.env.example` to document the required environment variables without storing real credentials.
+The Telegram bot token must remain server-side.
 
-If a Telegram bot token is accidentally exposed, revoke it through BotFather and generate a new token.
+## Documentation
 
----
+The project documentation should be kept together with the source code where practical.
 
-## Current Project Status — V8
+Recommended documents are:
 
-Nordic Ember V8 is a complete working demonstration application.
+- `README.md` — technical project overview
+- `Nordic_Ember_Restaurant_Admin_Manual.md` — restaurant administrator instructions
+- `Nordic_Ember_Customer_User_Manual.md` — customer instructions
+- `Nordic_Ember_Customer_Handover_and_Customization_Manual.md` — developer/customer handover and customization
+- `Nordic_Ember_Complete_Deployment_Railway_Resend_Telegram_Manual.md` — deployment and production infrastructure
+- `Nordic_Ember_Blog_Article_Updated.md` — current public tutorial/article content
 
-The project now includes:
+## Current Verification Status
 
-- React + TypeScript restaurant frontend
-- Node.js + Express backend
-- English and Swedish support
-- Restaurant menu and reservation workflow
-- SQLite reservation storage
-- Local confirmation email through Nodemailer/SMTP
-- Railway production deployment
-- Persistent production storage
-- Production confirmation email through Resend
-- Verified restaurant email domain `restaurant.softsolutionsahand.com`
-- Production sender `booking@restaurant.softsolutionsahand.com`
-- Telegram bot `@NordicEmberBot`
-- Working Telegram Mini App
-- Telegram menu configuration and direct Mini App link
-- Successful mobile Telegram reservation testing
-- Successful customer confirmation email testing
-- Production deployment documentation
-
-### Production Services
-
-- **Hosting:** Railway
-- **Production email:** Resend
-- **DNS:** Miss Hosting
-- **Source control:** GitHub
-- **Telegram configuration:** BotFather
-- **Stable Git tag:** `v1.8.0`
-
-### Live Application
-
-Web application:
+The current V10 language implementation has been verified locally with:
 
 ```text
-https://restaurant-telegram-mini-app-production.up.railway.app
+npm run lint   → passed
+npm run build  → passed
+Runtime test  → passed
 ```
 
-Telegram Mini App:
+The next project step is the final production deployment test after the documentation and Git commit are complete.
+
+## One-Time Language Installation Script
+
+The project may contain:
 
 ```text
-https://t.me/NordicEmberBot/restaurant
+nordic_ember_configurable_languages.py
 ```
 
-### Production Email Architecture
+This script was used once to install the language configuration into the source files.
 
-Local development continues to use Nodemailer/SMTP for email testing. Production uses the Resend API with the verified restaurant domain.
+It is not part of the normal restaurant administration workflow.
 
-```text
-Local development → Nodemailer / SMTP → Customer email
-Production → Railway → Resend → Customer email
-```
+After installation, the administrator changes languages through the Admin Dashboard only.
 
-The complete Railway, Resend, Miss Hosting, and Telegram deployment configuration is documented in the `Docs/` directory.
-
-Nordic Ember V8 demonstrates the complete path from local full-stack development to a publicly deployed restaurant web application with production email delivery and Telegram Mini App integration.
-
----
-
-## V9 Restaurant Admin & Reservation Management
-
-V9 adds a private restaurant-staff interface at `/admin` for managing reservations received by phone, walk-in, web, or Telegram.
-
-Admin capabilities include:
-
-- Create a reservation manually for a customer who calls the restaurant.
-- Search by reservation reference, guest name, phone number, or email.
-- Filter reservations by date and status.
-- Edit date, time, guest count, seating area, contact details, special requests, and internal notes.
-- Check guests in when they arrive.
-- Track `confirmed`, `arrived`, `completed`, `cancelled`, and `no-show` status.
-- Cancel reservations while retaining the history in the database.
-- Permanently delete a reservation when truly required.
-- View today's reservation and guest totals.
-
-The admin interface is protected by `ADMIN_PASSWORD`. Production must configure `ADMIN_PASSWORD` and preferably a separate `ADMIN_SESSION_SECRET` in Railway Variables. Admin sessions expire after eight hours and are stored only in the browser session storage.
-
-Existing V8 databases are migrated automatically on startup with new status, source, update-time, internal-note, and arrival-time fields.
+The script may be retained as a development/migration reference, but it should not be run again on the already modified project unless a developer is intentionally recreating the feature in another copy of the application.

@@ -1,13 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { TabView, Language } from '../types';
 import { RESTAURANT_IMAGES } from '../data/restaurantData';
-const LANGUAGE_OPTIONS: Array<{ value: Language; label: string }> = [
-  { value: 'EN', label: 'English' },
-  { value: 'SV', label: 'Svenska' },
-  { value: 'FA', label: 'فارسی' },
-  { value: 'TR', label: 'Türkçe' },
-];
-
 
 interface HeaderProps {
   currentTab: TabView;
@@ -24,37 +17,6 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenProfile,
   savedNotesCount = 0,
 }) => {
-  const [visibleLanguages, setVisibleLanguages] = useState<Language[]>(['EN', 'SV']);
-
-  useEffect(() => {
-    let active = true;
-
-    fetch('/api/config/languages')
-      .then(response => response.ok ? response.json() : null)
-      .then(data => {
-        if (!active || !Array.isArray(data?.languages)) return;
-
-        const allowed = data.languages.filter((value: unknown): value is Language =>
-          LANGUAGE_OPTIONS.some(option => option.value === value)
-        );
-
-        if (allowed.length > 0) {
-          setVisibleLanguages(allowed);
-
-          if (!allowed.includes(language)) {
-            onLanguageChange(allowed[0]);
-          }
-        }
-      })
-      .catch(() => {
-        // Keep the safe default: English + Swedish.
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
   const getSubTitle = () => {
   switch (language) {
     case 'SV':
@@ -213,14 +175,10 @@ const getLanguageTitle = () => {
     aria-label={getLanguageTitle()}
     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
   >
-    {visibleLanguages.map(code => {
-      const option = LANGUAGE_OPTIONS.find(item => item.value === code);
-      return option ? (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ) : null;
-    })}
+    <option value="EN">English</option>
+    <option value="SV">Svenska</option>
+    <option value="FA">فارسی</option>
+    <option value="TR">Türkçe</option>
   </select>
 </div>
 

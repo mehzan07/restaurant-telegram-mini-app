@@ -30,15 +30,6 @@ type FormState = Omit<
   Reservation,
   'id' | 'createdAt' | 'status' | 'source' | 'updatedAt' | 'arrivedAt'
 >;
-type UiLanguage = 'EN' | 'SV' | 'FA' | 'TR';
-
-const LANGUAGE_OPTIONS: Array<{ value: UiLanguage; label: string; description: string }> = [
-  { value: 'EN', label: 'English', description: 'English interface' },
-  { value: 'SV', label: 'Swedish', description: 'Svenskt gränssnitt' },
-  { value: 'FA', label: 'Farsi', description: 'Persian interface' },
-  { value: 'TR', label: 'Turkish', description: 'Türkçe arayüz' },
-];
-
 
 const emptyForm = (): FormState => ({
   guests: 2,
@@ -93,9 +84,6 @@ export const AdminView: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
-  const [visibleLanguages, setVisibleLanguages] = useState<UiLanguage[]>(['EN', 'SV']);
-  const [languageBusy, setLanguageBusy] = useState(false);
-
 
   const api = async (url: string, options: RequestInit = {}) => {
     const headers = new Headers(options.headers || {});
@@ -123,62 +111,6 @@ export const AdminView: React.FC = () => {
     }
 
     return data;
-  };
-
-
-  const loadLanguageSettings = async () => {
-    if (!token) return;
-
-    try {
-      const data = await api('/api/admin/languages');
-      if (Array.isArray(data.languages) && data.languages.length > 0) {
-        setVisibleLanguages(data.languages);
-      }
-    } catch (e) {
-      setMessage(
-        e instanceof Error ? e.message : 'Unable to load language settings'
-      );
-    }
-  };
-
-  const toggleLanguage = (language: UiLanguage) => {
-    setVisibleLanguages(current => {
-      if (current.includes(language)) {
-        if (current.length === 1) {
-          setMessage('At least one language must remain visible.');
-          return current;
-        }
-        return current.filter(item => item !== language);
-      }
-
-      return [...current, language];
-    });
-  };
-
-  const saveLanguageSettings = async () => {
-    if (visibleLanguages.length === 0) {
-      setMessage('At least one language must remain visible.');
-      return;
-    }
-
-    setLanguageBusy(true);
-    setMessage('');
-
-    try {
-      const data = await api('/api/admin/languages', {
-        method: 'PUT',
-        body: JSON.stringify({ languages: visibleLanguages }),
-      });
-
-      setVisibleLanguages(data.languages || visibleLanguages);
-      setMessage('Language settings saved.');
-    } catch (e) {
-      setMessage(
-        e instanceof Error ? e.message : 'Unable to save language settings'
-      );
-    } finally {
-      setLanguageBusy(false);
-    }
   };
 
   const load = async () => {
@@ -225,12 +157,6 @@ export const AdminView: React.FC = () => {
   useEffect(() => {
     void load();
   }, [token, statusFilter, dateFilter]);
-
-  useEffect(() => {
-    if (token) {
-      void loadLanguageSettings();
-    }
-  }, [token]);
 
   const today = new Date().toISOString().slice(0, 10);
 
@@ -586,72 +512,6 @@ export const AdminView: React.FC = () => {
             <div className="text-2xl font-semibold">
               {totalCount}
             </div>
-          </div>
-        </section>
-
-
-        {/* Visible languages */}
-        <section className="bg-white rounded-2xl p-4 md:p-6 mb-5 border border-[#c3c8c3]/60">
-          <div className="flex items-start justify-between gap-4 mb-4">
-            <div>
-              <h2 className="font-serif text-2xl">Visible languages</h2>
-              <p className="text-sm text-[#737874] mt-1">
-                Choose which languages customers can see in the Language dropdown.
-                English and Swedish are enabled by default.
-              </p>
-            </div>
-
-            <span className="text-xs text-[#737874] whitespace-nowrap">
-              {visibleLanguages.length} enabled
-            </span>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {LANGUAGE_OPTIONS.map(option => {
-              const checked = visibleLanguages.includes(option.value);
-
-              return (
-                <label
-                  key={option.value}
-                  className={`flex items-center gap-3 rounded-xl border p-3 cursor-pointer transition-colors ${
-                    checked
-                      ? 'border-[#725b38] bg-[#faf7f2]'
-                      : 'border-[#c3c8c3] bg-white'
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={() => toggleLanguage(option.value)}
-                    className="w-4 h-4 accent-[#725b38]"
-                  />
-
-                  <span className="min-w-0">
-                    <span className="block font-semibold text-sm">
-                      {option.label}
-                    </span>
-                    <span className="block text-xs text-[#737874] mt-0.5">
-                      {option.description}
-                    </span>
-                  </span>
-                </label>
-              );
-            })}
-          </div>
-
-          <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
-            <button
-              type="button"
-              disabled={languageBusy}
-              onClick={() => void saveLanguageSettings()}
-              className="bg-[#091510] text-white rounded-xl px-5 py-3 font-semibold disabled:opacity-50"
-            >
-              {languageBusy ? 'Saving…' : 'Save language settings'}
-            </button>
-
-            <span className="text-xs text-[#737874]">
-              At least one language must remain enabled.
-            </span>
           </div>
         </section>
 

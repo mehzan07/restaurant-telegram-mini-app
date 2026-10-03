@@ -10,55 +10,6 @@ import './telegram';
 const app = express();
 const PORT = Number(process.env.PORT) || 3001;
 app.use(express.json());
-// ---------------------------------------------------------
-// Configurable UI languages
-// ---------------------------------------------------------
-
-const ALLOWED_UI_LANGUAGES = ['EN', 'SV', 'FA', 'TR'] as const;
-type UiLanguage = typeof ALLOWED_UI_LANGUAGES[number];
-const DEFAULT_UI_LANGUAGES: UiLanguage[] = ['EN', 'SV'];
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS app_settings (
-    key TEXT PRIMARY KEY,
-    value TEXT NOT NULL
-  )
-`);
-
-const readVisibleLanguages = (): UiLanguage[] => {
-  const row = db
-    .prepare('SELECT value FROM app_settings WHERE key = ?')
-    .get('visible_languages') as { value?: string } | undefined;
-
-  if (!row?.value) {
-    db.prepare(
-      'INSERT OR REPLACE INTO app_settings (key, value) VALUES (?, ?)'
-    ).run('visible_languages', JSON.stringify(DEFAULT_UI_LANGUAGES));
-    return [...DEFAULT_UI_LANGUAGES];
-  }
-
-  try {
-    const parsed = JSON.parse(row.value);
-    if (!Array.isArray(parsed)) return [...DEFAULT_UI_LANGUAGES];
-
-    const languages = parsed.filter(
-      (value): value is UiLanguage =>
-        typeof value === 'string' &&
-        (ALLOWED_UI_LANGUAGES as readonly string[]).includes(value)
-    );
-
-    return languages.length > 0 ? languages : [...DEFAULT_UI_LANGUAGES];
-  } catch {
-    return [...DEFAULT_UI_LANGUAGES];
-  }
-};
-
-const saveVisibleLanguages = (languages: UiLanguage[]) => {
-  db.prepare(
-    'INSERT OR REPLACE INTO app_settings (key, value) VALUES (?, ?)'
-  ).run('visible_languages', JSON.stringify(languages));
-};
-
 
 // ---------------------------------------------------------
 // Reservation configuration
@@ -98,13 +49,6 @@ const ALLOWED_COUNTRY_CODES = [
 // ---------------------------------------------------------
 // Health check
 // ---------------------------------------------------------
-
-app.get('/api/config/languages', (_req, res) => {
-  return res.json({
-    success: true,
-    languages: readVisibleLanguages(),
-  });
-});
 
 app.get('/api/health', (_req, res) => {
   res.json({
@@ -443,44 +387,6 @@ const requireAdmin: express.RequestHandler = (req, res, next) => {
   if (!verifyAdminToken(token)) return res.status(401).json({ error: 'Admin authentication required' });
   next();
 };
-
-app.get('/api/admin/languages', requireAdmin, (_req, res) => {
-  return res.json({
-    success: true,
-    languages: readVisibleLanguages(),
-  });
-});
-
-app.put('/api/admin/languages', requireAdmin, (req, res) => {
-  const requested = req.body?.languages;
-
-  if (!Array.isArray(requested)) {
-    return res.status(400).json({ error: 'Languages must be an array' });
-  }
-
-  const languages = requested.filter(
-    (value: unknown): value is UiLanguage =>
-      typeof value === 'string' &&
-      (ALLOWED_UI_LANGUAGES as readonly string[]).includes(value)
-  );
-
-  const uniqueLanguages = ALLOWED_UI_LANGUAGES.filter(language =>
-    languages.includes(language)
-  );
-
-  if (uniqueLanguages.length === 0) {
-    return res.status(400).json({
-      error: 'At least one language must remain visible',
-    });
-  }
-
-  saveVisibleLanguages(uniqueLanguages);
-
-  return res.json({
-    success: true,
-    languages: uniqueLanguages,
-  });
-});
 
 app.post('/api/admin/login', (req, res) => {
   if (!adminPassword) {
