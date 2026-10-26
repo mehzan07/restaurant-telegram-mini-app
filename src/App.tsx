@@ -3,94 +3,98 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
-import { TabView, Language, Dish, ConfirmedBooking } from './types';
-import { DISHES } from './data/restaurantData';
-import { Header } from './components/Header';
-import { Navigation } from './components/Navigation';
-import { DishModal } from './components/DishModal';
-import { ProfileDrawer } from './components/ProfileDrawer';
-import { Toast } from './components/Toast';
+import React, { useState, useEffect } from "react";
+import { TabView, Language, Dish, ConfirmedBooking } from "./types";
+import { DISHES } from "./data/restaurantData";
+import { Header } from "./components/Header";
+import { Navigation } from "./components/Navigation";
+import { DishModal } from "./components/DishModal";
+import { ProfileDrawer } from "./components/ProfileDrawer";
+import { Toast } from "./components/Toast";
 
-import { HomeView } from './views/HomeView';
-import { MenuView } from './views/MenuView';
-import { BookTableView } from './views/BookTableView';
-import { AboutView } from './views/AboutView';
-import { ContactView } from './views/ContactView';
-import { AdminView } from './views/AdminView';
+import { HomeView } from "./views/HomeView";
+import { MenuView } from "./views/MenuView";
+import { BookTableView } from "./views/BookTableView";
+import { AboutView } from "./views/AboutView";
+import { ContactView } from "./views/ContactView";
+import { AdminView } from "./views/AdminView";
 
 // ---------------------------------------------------------
 // URL / tab helpers
 // ---------------------------------------------------------
 
 const TAB_PATHS: Record<TabView, string> = {
-  home: '/',
-  menu: '/menu',
-  'book-table': '/book-table',
-  about: '/about',
-  contact: '/contact',
+  home: "/",
+  menu: "/menu",
+  "book-table": "/book-table",
+  about: "/about",
+  contact: "/contact",
 };
 
 const getTabFromPath = (pathname: string): TabView => {
   const normalizedPath =
-    pathname.length > 1 && pathname.endsWith('/')
+    pathname.length > 1 && pathname.endsWith("/")
       ? pathname.slice(0, -1)
       : pathname;
 
   switch (normalizedPath) {
-    case '/menu':
-      return 'menu';
+    case "/menu":
+      return "menu";
 
-    case '/book-table':
-      return 'book-table';
+    case "/book-table":
+      return "book-table";
 
-    case '/about':
-      return 'about';
+    case "/about":
+      return "about";
 
-    case '/contact':
-      return 'contact';
+    case "/contact":
+      return "contact";
 
-    case '/':
+    case "/":
     default:
-      return 'home';
+      return "home";
   }
 };
 
 export default function App() {
-  if (window.location.pathname === '/admin' || window.location.pathname.startsWith('/admin/')) {
+  if (
+    window.location.pathname === "/admin" ||
+    window.location.pathname.startsWith("/admin/")
+  ) {
     return <AdminView />;
   }
 
   const [currentTab, setCurrentTab] = useState<TabView>(() =>
-    getTabFromPath(window.location.pathname)
+    getTabFromPath(window.location.pathname),
   );
 
-  const [language, setLanguage] = useState<Language>('EN');
+  const [language, setLanguage] = useState<Language>("EN");
   const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   // Initial confirmed reservation reflecting the Astrid Lindqvist pass from the design
-  const [confirmedBookings, setConfirmedBookings] =
-    useState<ConfirmedBooking[]>([
-      {
-        id: '#TR-88421',
-        guests: 2,
-        date: 'Today, Sun 20 Sep',
-        time: '18:30',
-        seatingArea: 'Main Dining Room (Matsal)',
-        fullName: 'Astrid Lindqvist',
-        countryCode: '+46',
-        phone: '070 123 45 67',
-        email: 'astrid.lindqvist@example.se',
-        specialRequests:
-          'Quiet corner requested for anniversary dinner. 1 pescatarian guest.',
-        createdAt: new Date().toISOString(),
-      },
-    ]);
+  const [confirmedBookings, setConfirmedBookings] = useState<
+    ConfirmedBooking[]
+  >([
+    {
+      id: "#TR-88421",
+      guests: 2,
+      date: "Today, Sun 20 Sep",
+      time: "18:30",
+      seatingArea: "Main Dining Room (Matsal)",
+      fullName: "Astrid Lindqvist",
+      countryCode: "+46",
+      phone: "070 123 45 67",
+      email: "astrid.lindqvist@example.se",
+      specialRequests:
+        "Quiet corner requested for anniversary dinner. 1 pescatarian guest.",
+      createdAt: new Date().toISOString(),
+    },
+  ]);
 
   const [savedDishes, setSavedDishes] = useState<Dish[]>([DISHES[0]]);
 
-  const [toastMessage, setToastMessage] = useState('');
+  const [toastMessage, setToastMessage] = useState("");
   const [isToastVisible, setIsToastVisible] = useState(false);
 
   // ---------------------------------------------------------
@@ -107,14 +111,14 @@ export default function App() {
 
       window.scrollTo({
         top: 0,
-        behavior: 'smooth',
+        behavior: "smooth",
       });
     };
 
-    window.addEventListener('popstate', handlePopState);
+    window.addEventListener("popstate", handlePopState);
 
     return () => {
-      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener("popstate", handlePopState);
     };
   }, []);
 
@@ -140,18 +144,14 @@ export default function App() {
     if (tab === currentTab) {
       window.scrollTo({
         top: 0,
-        behavior: 'smooth',
+        behavior: "smooth",
       });
       return;
     }
 
     const path = TAB_PATHS[tab];
 
-    window.history.pushState(
-      { tab },
-      '',
-      path
-    );
+    window.history.pushState({ tab }, "", path);
 
     setCurrentTab(tab);
     setSelectedDish(null);
@@ -159,7 +159,7 @@ export default function App() {
 
     window.scrollTo({
       top: 0,
-      behavior: 'smooth',
+      behavior: "smooth",
     });
   };
 
@@ -176,15 +176,15 @@ export default function App() {
       setSavedDishes((prev) => [...prev, dish]);
 
       showToast(
-        language === 'SV'
+        language === "SV"
           ? `Lade till "${dish.titleSv}" i dina provsmakningsnoteringar`
-          : `Saved "${dish.title}" to your tasting wishlist`
+          : `Saved "${dish.title}" to your tasting wishlist`,
       );
     } else {
       showToast(
-        language === 'SV'
+        language === "SV"
           ? `"${dish.titleSv}" finns redan i din lista`
-          : `"${dish.title}" is already in your wishlist`
+          : `"${dish.title}" is already in your wishlist`,
       );
     }
 
@@ -192,14 +192,12 @@ export default function App() {
   };
 
   const handleRemoveSavedDish = (dishId: string) => {
-    setSavedDishes((prev) =>
-      prev.filter((dish) => dish.id !== dishId)
-    );
+    setSavedDishes((prev) => prev.filter((dish) => dish.id !== dishId));
 
     showToast(
-      language === 'SV'
-        ? 'Borttagen från provsmakningslistan'
-        : 'Removed from wishlist'
+      language === "SV"
+        ? "Borttagen från provsmakningslistan"
+        : "Removed from wishlist",
     );
   };
 
@@ -208,7 +206,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fbf9f7] text-[#1b1c1b] flex flex-col selection:bg-[#fedeb2] selection:text-[#281800]">
+    <div className="min-h-screen pb-20 bg-[#fbf9f7] text-[#1b1c1b] flex flex-col selection:bg-[#fedeb2] selection:text-[#281800]">
       {/* Fixed App Header */}
       <Header
         currentTab={currentTab}
@@ -220,7 +218,7 @@ export default function App() {
 
       {/* Main Screen Container */}
       <main className="flex-1 w-full max-w-lg md:max-w-2xl lg:max-w-5xl mx-auto pt-20 pb-20 px-4 md:px-6 lg:px-8">
-        {currentTab === 'home' && (
+        {currentTab === "home" && (
           <HomeView
             onNavigate={handleTabChange}
             language={language}
@@ -228,7 +226,7 @@ export default function App() {
           />
         )}
 
-        {currentTab === 'menu' && (
+        {currentTab === "menu" && (
           <MenuView
             language={language}
             onSelectDish={setSelectedDish}
@@ -237,7 +235,7 @@ export default function App() {
           />
         )}
 
-        {currentTab === 'book-table' && (
+        {currentTab === "book-table" && (
           <BookTableView
             language={language}
             onBookingConfirmed={handleNewBooking}
@@ -245,18 +243,12 @@ export default function App() {
           />
         )}
 
-        {currentTab === 'about' && (
-          <AboutView
-            onNavigate={handleTabChange}
-            language={language}
-          />
+        {currentTab === "about" && (
+          <AboutView onNavigate={handleTabChange} language={language} />
         )}
 
-        {currentTab === 'contact' && (
-          <ContactView
-            language={language}
-            onShowToast={showToast}
-          />
+        {currentTab === "contact" && (
+          <ContactView language={language} onShowToast={showToast} />
         )}
       </main>
 
@@ -288,16 +280,16 @@ export default function App() {
         confirmedBookings={confirmedBookings}
         savedDishes={savedDishes}
         onRemoveDish={handleRemoveSavedDish}
-        onNavigateToBooking={() =>
-          handleTabChange('book-table')
-        }
+        onNavigateToBooking={() => handleTabChange("book-table")}
       />
 
       {/* Transient Notification Toast */}
-      <Toast
-        message={toastMessage}
-        isVisible={isToastVisible}
-      />
+      <Toast message={toastMessage} isVisible={isToastVisible} />
+
+      {/* Copyright Footer */}
+      <footer className="w-full py-3 text-center text-xs text-gray-500">
+        © 2026 Softsolution Sahand. All rights reserved.
+      </footer>
     </div>
   );
 }
